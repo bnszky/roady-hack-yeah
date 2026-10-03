@@ -9,7 +9,22 @@ from app.middleware.logging import RequestLoggingMiddleware
 
 configure_logging()
 
-app = FastAPI(title=settings.app_name, version=settings.app_version, debug=settings.debug)
+OPENAPI_TAGS = [
+    {"name": "health", "description": "Liveness check"},
+    {"name": "categories", "description": "Problem categories and user proposals"},
+    {"name": "problems", "description": "Map, reports, confirmations and admin management"},
+    {"name": "routes", "description": "Problems along a walking route A -> B"},
+    {"name": "assistant", "description": "Voice assistant (DeepSeek) - drafts, nothing is saved"},
+    {"name": "stats", "description": "Admin dashboard statistics"},
+]
+
+app = FastAPI(
+    title=settings.app_name,
+    version=settings.app_version,
+    debug=settings.debug,
+    description="Routy - crowdsourced map of accessibility problems in the city.",
+    openapi_tags=OPENAPI_TAGS,
+)
 
 # CORS first, so the request-logging middleware stays outermost.
 app.add_middleware(

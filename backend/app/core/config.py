@@ -31,6 +31,25 @@ class Settings(BaseSettings):
     # CORS (JSON array of origins)
     cors_origins: list[str] = ["*"]
 
+    # Problems
+    # New reports of the same category within this radius are attached to an existing problem.
+    problem_dedupe_radius_m: float = 30.0
+    # A problem stops being observable after this many "NO" answers since the last "YES".
+    problem_denial_threshold: int = 3
+    nearby_default_radius_m: float = 50.0
+    route_default_buffer_m: float = 30.0
+
+    # Routing (OSRM-compatible API; FOSSGIS server has a dedicated walking instance)
+    osrm_base_url: str = "https://routing.openstreetmap.de/routed-foot"
+    osrm_profile: str = "foot"
+    osrm_timeout_s: float = 15.0
+
+    # Assistant (DeepSeek, OpenAI-compatible chat completions)
+    deepseek_api_key: str = ""
+    deepseek_base_url: str = "https://api.deepseek.com"
+    deepseek_model: str = "deepseek-flash"
+    deepseek_timeout_s: float = 30.0
+
 
 @lru_cache
 def get_settings() -> Settings:

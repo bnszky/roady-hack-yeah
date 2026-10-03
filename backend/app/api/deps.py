@@ -1,9 +1,13 @@
 from typing import Annotated
 
 from fastapi import Depends, Header, HTTPException, status
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import settings
 from app.core.security import SupabaseAuthError, get_supabase_user
+from app.db.session import get_db
+
+DbSession = Annotated[AsyncSession, Depends(get_db)]
 
 
 async def get_current_user(

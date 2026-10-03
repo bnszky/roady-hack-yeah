@@ -1,17 +1,19 @@
 ---
-description: Frontend architectural patterns, React, TanStack Query, and Shadcn UI guidelines
+description: Routy admin panel (web/) - React, TanStack Query and Shadcn UI guidelines
 alwaysApply: false
 ---
 
-# Frontend Development Guidelines
+# Routy Admin Panel - Frontend Development Guidelines
 
-You are an expert Frontend Developer building with React, TypeScript, TanStack Query, Shadcn UI, and Tailwind CSS.
+You are an expert Frontend Developer building the **Routy** admin panel (`web/`) with React, TypeScript, Vite, React Router, TanStack Query, Shadcn UI, Tailwind CSS and React Leaflet.
+
+Routy is a crowdsourced map of accessibility problems in the city. The admin panel lets city staff browse problems on a map, sort/filter them, update their status and manage problem categories (including approving categories proposed by users). UI copy is in **Polish**.
 
 ---
 
 ## 1. Project Architecture & Directory Structure
 
-- **`src/pages/`**: Full page views and route components.
+- **`src/pages/`**: Full page views and route components (registered in `src/router.tsx`).
 - **`src/components/`**: Large, feature-specific composite components.
 - **`src/components/shared/`**: Reusable shared building blocks. Reference `src/components/shared/labeled-input.tsx` for component patterns combining `cn()` and Shadcn UI primitives.
 - **`src/components/ui/`**: Auto-generated Shadcn UI components. **NEVER manually edit or modify files in `components/ui/`**.
@@ -27,16 +29,18 @@ You are an expert Frontend Developer building with React, TypeScript, TanStack Q
 
 - **Shadcn UI & Tailwind CSS**:
   - Check [Shadcn UI Docs](https://ui.shadcn.com/docs/components) before building UI elements from scratch.
-  - Install new Shadcn primitives as needed via CLI rather than writing custom equivalents.
+  - Install new Shadcn primitives as needed via CLI (`npx shadcn@latest add <component>` in `web/`) rather than writing custom equivalents.
   - Use `cn()` from `src/lib/utils` for conditional class merging.
   - Prioritize reusing existing components from `src/components/shared/`.
+- **Maps**: use `src/components/problems-map.tsx` (React Leaflet + OpenStreetMap tiles).
+- **Category icons**: lucide icon names stored in the DB, mapped in `src/lib/category-icons.ts` (keep in sync with `SUGGESTED_ICONS` in `backend/app/services/assistant_service.py`).
 
 ---
 
 ## 3. Data Fetching & API Communication
 
 - **Backend-Only Communication**:
-  - Always communicate exclusively with the FastAPI backend.
+  - Always communicate exclusively with the FastAPI backend (`VITE_API_URL`, default `http://localhost:8000/api/v1`).
   - Structure all API endpoints, query keys, queries, and mutations inside `src/api/`.
   - Use **TanStack Query** (`@tanstack/react-query`) for all asynchronous server-state management.
 - **Schema Synchronization**:
@@ -51,6 +55,7 @@ You are an expert Frontend Developer building with React, TypeScript, TanStack Q
 - **Linting & Formatting**:
   - Validate all code changes before completion:
     ```bash
-    npx prettier --check .
-    npm run lint
+    npx prettier --check .      # from repo root
+    npm run lint                # in web/ (oxlint)
+    npm run build               # in web/ (tsc + vite)
     ```
