@@ -1,55 +1,49 @@
 /**
- * Below are the colors that are used in the app. The colors are defined in the light and dark mode.
- * There are many other ways to style your app. For example, [Nativewind](https://www.nativewind.dev/), [Tamagui](https://tamagui.dev/), [unistyles](https://reactnativeunistyles.vercel.app), etc.
+ * Roady design tokens, adapted from the "Broadsheet" design system (see
+ * assets/design/design.html): paper ground, Source Serif 4 as the only typeface,
+ * cyan as the interactive color and magenta as the severity spot.
  */
 
-import '@/global.css';
-
-import { Platform } from 'react-native';
-
 export const Colors = {
-  light: {
-    text: '#000000',
-    background: '#ffffff',
-    backgroundElement: '#F0F0F3',
-    backgroundSelected: '#E0E1E6',
-    textSecondary: '#60646C',
-  },
-  dark: {
-    text: '#ffffff',
-    background: '#000000',
-    backgroundElement: '#212225',
-    backgroundSelected: '#2E3135',
-    textSecondary: '#B0B4BA',
-  },
+  bg: '#f3f2f2',
+  surface: '#eae9e9',
+  text: '#201e1d',
+  divider: 'rgba(32, 30, 29, 0.16)',
+  scrim: 'rgba(45, 43, 43, 0.35)',
+
+  neutral100: '#f8f4f4',
+  neutral200: '#eae7e7',
+  neutral300: '#d7d3d3',
+  neutral400: '#bab6b6',
+  neutral500: '#9b9797',
+  neutral600: '#7d7979',
+  neutral700: '#605d5d',
+  neutral800: '#444141',
+  neutral900: '#2d2b2b',
+
+  // The app darkens the system's cyan for contrast on touch targets.
+  accent: '#006080',
+  accent100: '#e9f8ff',
+  accent200: '#cbeeff',
+  accent300: '#99e0ff',
+  accent600: '#005572',
+  accent700: '#004a63',
+  accent800: '#004961',
+
+  accent2_100: '#fff1f4',
+  accent2_600: '#d82071',
+  accent2_700: '#aa0b56',
+  accent2_800: '#790e3d',
 } as const;
 
-export type ThemeColor = keyof typeof Colors.light & keyof typeof Colors.dark;
+export type ThemeColor = keyof typeof Colors;
 
-export const Fonts = Platform.select({
-  ios: {
-    /** iOS `UIFontDescriptorSystemDesignDefault` */
-    sans: 'system-ui',
-    /** iOS `UIFontDescriptorSystemDesignSerif` */
-    serif: 'ui-serif',
-    /** iOS `UIFontDescriptorSystemDesignRounded` */
-    rounded: 'ui-rounded',
-    /** iOS `UIFontDescriptorSystemDesignMonospaced` */
-    mono: 'ui-monospace',
-  },
-  default: {
-    sans: 'normal',
-    serif: 'serif',
-    rounded: 'normal',
-    mono: 'monospace',
-  },
-  web: {
-    sans: 'var(--font-display)',
-    serif: 'var(--font-serif)',
-    rounded: 'var(--font-rounded)',
-    mono: 'var(--font-mono)',
-  },
-});
+/** Font family per weight: custom fonts on Android need one family per face. */
+export const Fonts = {
+  regular: 'SourceSerif4_400Regular',
+  italic: 'SourceSerif4_400Regular_Italic',
+  semibold: 'SourceSerif4_600SemiBold',
+} as const;
 
 export const Spacing = {
   half: 2,
@@ -61,5 +55,35 @@ export const Spacing = {
   six: 64,
 } as const;
 
-export const BottomTabInset = Platform.select({ ios: 50, android: 80 }) ?? 0;
-export const MaxContentWidth = 800;
+/** Touch app radii: larger than the system's 2px (sheets 24-28, controls 14-18). */
+export const Radius = {
+  pill: 999,
+  sm: 10,
+  md: 14,
+  lg: 18,
+  sheet: 28,
+} as const;
+
+export const Shadows = {
+  sm: {
+    shadowColor: Colors.neutral900,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.14,
+    shadowRadius: 2,
+    elevation: 2,
+  },
+  md: {
+    shadowColor: Colors.neutral900,
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.16,
+    shadowRadius: 10,
+    elevation: 5,
+  },
+  lg: {
+    shadowColor: Colors.neutral900,
+    shadowOffset: { width: 0, height: 12 },
+    shadowOpacity: 0.22,
+    shadowRadius: 32,
+    elevation: 12,
+  },
+} as const;

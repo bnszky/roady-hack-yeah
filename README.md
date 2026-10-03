@@ -111,8 +111,11 @@ uv run alembic upgrade head
 uv run python -m scripts.seed --demo
 
 # uruchom serwer (http://localhost:8000, docs na /docs)
-uv run uvicorn app.main:app --reload
+# --host 0.0.0.0 jest potrzebne, żeby telefon w tej samej sieci Wi-Fi widział backend
+uv run uvicorn app.main:app --reload --host 0.0.0.0
 ```
+
+> Na Windowsie przy pierwszym starcie zezwól Pythonowi na ruch w sieci prywatnej (zapora), inaczej telefon nie połączy się z portem 8000.
 
 ### Lint / format (Ruff)
 
@@ -179,28 +182,26 @@ Widoki: mapa zgłoszeń z filtrami (kolor = średnia uciążliwość, wielkość
 cd mobile
 
 # kopiuj zmienne środowiskowe
-cp .env.example .env.local    # uzupełnij EXPO_PUBLIC_SUPABASE_URL / _ANON_KEY
+cp .env.example .env.local    # uzupełnij EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN (Supabase opcjonalnie)
 
 # zależności (już zainstalowane na poziomie root — w razie potrzeby:)
 npm install
 ```
 
-### Uruchomienie na emulatorze Android (Pixel 8 Pro)
+### Dev build (wymagany — aplikacja nie działa w Expo Go)
 
-1. W **Android Studio** otwórz **Device Manager** i uruchom emulator **Pixel 8 Pro** (API 34+).
-2. Upewnij się, że backend działa na `http://localhost:8000`.
-3. Wystartuj Expo i otwórz na Androidzie:
+Mapa (Mapbox) i rozpoznawanie mowy to moduły natywne, więc potrzebny jest własny dev build zamiast Expo Go.
 
 ```bash
-# z katalogu root:
-npm run mobile:android
-
-# albo z mobile:
-npx expo start --android
+cd mobile
+npx expo run:android            # emulator
+npx expo run:android --device   # telefon podłączony przez USB (debugowanie USB włączone)
 ```
 
-> Android emulator nie widzi `localhost` hosta — `src/lib/env.ts` automatycznie zamienia go na `10.0.2.2`.
-> Na fizycznym urządzeniu ustaw `EXPO_PUBLIC_API_URL` na adres IP komputera w LAN.
+Pełny build jest potrzebny tylko po zmianie pakietów natywnych / `app.json`. Na co dzień: `npx expo start` i otwórz zainstalowaną aplikację **Routy**.
+
+- **Adres backendu:** `EXPO_PUBLIC_API_URL=http://localhost:8000` działa wszędzie — `src/lib/env.ts` podmienia `localhost` na `10.0.2.2` na emulatorze i na IP komputera (tego samego co Metro) na telefonie. Backend uruchom z `--host 0.0.0.0`. Aktualny adres i status połączenia widać w zakładce **Aktywność → Serwer**.
+- **Rozpoznawanie mowy** wymaga aplikacji Google na urządzeniu (dostarcza usługę rozpoznawania). Emulatory bez Sklepu Play zwykle jej nie mają — testuj głos na telefonie.
 
 ### Formatowanie / lint / typy
 

@@ -1,12 +1,12 @@
 import { ActivityIndicator, StyleSheet } from 'react-native';
 
 import { ThemedView } from '@/components/themed-view';
-import { Spacing } from '@/constants/theme';
+import { Colors, Spacing } from '@/constants/theme';
 
 export function Loading() {
   return (
     <ThemedView style={styles.container}>
-      <ActivityIndicator size="large" />
+      <ActivityIndicator size="large" color={Colors.accent} />
     </ThemedView>
   );
 }

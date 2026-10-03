@@ -5,13 +5,16 @@ import { supabase } from '@/lib/supabase';
 
 export function useAuth() {
   const [session, setSession] = useState<Session | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(supabase !== null);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => {
-      setSession(data.session);
-      setLoading(false);
-    });
+    if (!supabase) return;
+
+    supabase.auth
+      .getSession()
+      .then(({ data }) => setSession(data.session))
+      .catch(() => setSession(null))
+      .finally(() => setLoading(false));
 
     const { data: listener } = supabase.auth.onAuthStateChange((_event, nextSession) => {
       setSession(nextSession);
@@ -22,9 +25,13 @@ export function useAuth() {
     };
   }, []);
 
-  const signIn = (email: string, password: string) =>
-    supabase.auth.signInWithPassword({ email, password });
-  const signOut = () => supabase.auth.signOut();
+  const signIn = (email: string, password: string) => {
+    if (!supabase) throw new Error('Supabase nie jest skonfigurowany (mobile/.env.local)');
+    return supabase.auth.signInWithPassword({ email, password });
+  };
+  const signOut = async () => {
+    await supabase?.auth.signOut();
+  };
 
   return { session, loading, signIn, signOut };
 }

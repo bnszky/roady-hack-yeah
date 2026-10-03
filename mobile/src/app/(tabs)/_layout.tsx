@@ -1,36 +1,24 @@
-import { Ionicons } from '@expo/vector-icons';
-import { Tabs } from 'expo-router';
+import { Tabs } from 'expo-router/js-tabs';
+import { useCallback, useState } from 'react';
+
+import { ReportMethodSheet } from '@/components/roady/report-method-sheet';
+import { TabBar } from '@/components/roady/tab-bar';
+import { ReportSheetContext } from '@/context/report-sheet';
 
 export default function TabsLayout() {
+  const [sheetOpen, setSheetOpen] = useState(false);
+  const open = useCallback(() => setSheetOpen(true), []);
+
   return (
-    <Tabs screenOptions={{ tabBarActiveTintColor: '#3c87f7' }}>
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: 'Home',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="home-outline" size={size} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="voice"
-        options={{
-          title: 'Voice',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="mic-outline" size={size} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="settings"
-        options={{
-          title: 'Settings',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="settings-outline" size={size} color={color} />
-          ),
-        }}
-      />
-    </Tabs>
+    <ReportSheetContext.Provider value={open}>
+      <Tabs
+        screenOptions={{ headerShown: false }}
+        tabBar={(props) => <TabBar {...props} onReport={open} />}
+      >
+        <Tabs.Screen name="index" />
+        <Tabs.Screen name="activity" />
+      </Tabs>
+      <ReportMethodSheet visible={sheetOpen} onClose={() => setSheetOpen(false)} />
+    </ReportSheetContext.Provider>
   );
 }

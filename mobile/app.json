@@ -6,7 +6,7 @@
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "routy",
-    "userInterfaceStyle": "automatic",
+    "userInterfaceStyle": "light",
     "ios": {
       "icon": "./assets/expo.icon"
     },
@@ -18,7 +18,8 @@
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
       "predictiveBackGestureEnabled": false,
-      "package": "com.routy.app"
+      "package": "com.routy.app",
+      "permissions": ["ACCESS_COARSE_LOCATION", "ACCESS_FINE_LOCATION", "RECORD_AUDIO"]
     },
     "web": {
       "output": "static",
@@ -37,12 +38,20 @@
       [
         "expo-speech-recognition",
         {
-          "microphonePermission": "Colortrail uses the microphone to report obstacles by voice.",
-          "speechRecognitionPermission": "Colortrail uses speech recognition to understand voice reports.",
+          "microphonePermission": "Routy używa mikrofonu, aby zgłaszać problemy głosem.",
+          "speechRecognitionPermission": "Routy rozpoznaje mowę, aby zrozumieć zgłoszenie.",
           "androidSpeechServicePackages": ["com.google.android.googlequicksearchbox"]
         }
       ],
-      "expo-audio"
+      "expo-audio",
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "Routy używa Twojej lokalizacji, aby pokazać zgłoszenia w okolicy i oznaczyć miejsce problemu."
+        }
+      ],
+      "expo-font",
+      "@rnmapbox/maps"
     ],
     "experiments": {
       "typedRoutes": true,

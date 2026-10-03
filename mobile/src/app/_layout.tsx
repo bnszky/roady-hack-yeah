@@ -1,20 +1,66 @@
-import { DarkTheme, DefaultTheme, Stack, ThemeProvider } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
+import {
+  SourceSerif4_400Regular,
+  SourceSerif4_400Regular_Italic,
+  SourceSerif4_600SemiBold,
+  useFonts,
+} from '@expo-google-fonts/source-serif-4';
 import { QueryClientProvider } from '@tanstack/react-query';
-import { useColorScheme } from 'react-native';
+import { DefaultTheme, Stack, ThemeProvider } from 'expo-router';
+import * as SplashScreen from 'expo-splash-screen';
+import { StatusBar } from 'expo-status-bar';
+import { IconContext } from 'phosphor-react-native';
+import { useEffect } from 'react';
 
+import { initMapbox } from '@/components/roady/map';
+import { Colors } from '@/constants/theme';
+import { ReportDraftProvider } from '@/context/report-draft';
 import { queryClient } from '@/lib/query-client';
 
+SplashScreen.preventAutoHideAsync();
+initMapbox();
+
+const navigationTheme = {
+  ...DefaultTheme,
+  colors: {
+    ...DefaultTheme.colors,
+    background: Colors.bg,
+    primary: Colors.accent,
+    text: Colors.text,
+  },
+};
+
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
+  const [fontsLoaded, fontError] = useFonts({
+    SourceSerif4_400Regular,
+    SourceSerif4_400Regular_Italic,
+    SourceSerif4_600SemiBold,
+  });
+  const ready = fontsLoaded || !!fontError;
+
+  useEffect(() => {
+    if (ready) SplashScreen.hideAsync();
+  }, [ready]);
+
+  if (!ready) return null;
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+    <ThemeProvider value={navigationTheme}>
       <QueryClientProvider client={queryClient}>
-        <Stack>
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        </Stack>
-        <StatusBar style="auto" />
+        <IconContext.Provider value={{ weight: 'duotone', color: Colors.text }}>
+          <ReportDraftProvider>
+            <Stack
+              screenOptions={{ headerShown: false, contentStyle: { backgroundColor: Colors.bg } }}
+            >
+              <Stack.Screen name="(tabs)" />
+              <Stack.Screen name="problem/[id]" />
+              <Stack.Screen
+                name="report"
+                options={{ presentation: 'fullScreenModal', animation: 'slide_from_bottom' }}
+              />
+            </Stack>
+            <StatusBar style="dark" />
+          </ReportDraftProvider>
+        </IconContext.Provider>
       </QueryClientProvider>
     </ThemeProvider>
   );
