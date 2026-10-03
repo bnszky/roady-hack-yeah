@@ -1,10 +1,15 @@
 import Mapbox, { MapView, type MapState } from '@rnmapbox/maps';
 import type { ComponentProps } from 'react';
 
+import mapStyle from '@/components/roady/map-style.json';
 import { env } from '@/lib/env';
 
-/** Muted, paper-like basemap so the markers carry the color. */
-export const MAP_STYLE = 'mapbox://styles/mapbox/light-v11';
+/**
+ * Mapbox "light-v11" recolored to the app palette (white-grey ground, turquoise-tinted
+ * water and greens, grey labels in Montserrat) so the markers carry the color.
+ * Regenerate with `node scripts/build-map-style.mjs` after palette changes.
+ */
+const MAP_STYLE_JSON = JSON.stringify(mapStyle);
 
 /** Call once at startup, before the first map renders. */
 export function initMapbox() {
@@ -39,7 +44,7 @@ export function toPosition(p: { latitude: number; longitude: number }): [number,
 export function RoadyMap(props: ComponentProps<typeof MapView>) {
   return (
     <MapView
-      styleURL={MAP_STYLE}
+      styleJSON={MAP_STYLE_JSON}
       compassEnabled={false}
       scaleBarEnabled={false}
       pitchEnabled={false}
