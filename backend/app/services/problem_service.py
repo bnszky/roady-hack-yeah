@@ -170,9 +170,11 @@ class ProblemService:
         if category.status == CategoryStatus.REJECTED:
             raise ValidationError("This category was rejected - choose another one")
 
+        # Severity is optional for most categories but always kept when given: it drives
+        # the map marker size for every kind of problem, not only "required" ones.
         if category.is_importance_level_required and data.importance_level is None:
             raise ValidationError("importance_level (1-5) is required for this category")
-        importance = data.importance_level if category.is_importance_level_required else None
+        importance = data.importance_level
 
         if data.attach_to_problem_id is not None:
             problem = await self.get(data.attach_to_problem_id)
@@ -215,11 +217,11 @@ class ProblemService:
         self, problem_id: uuid.UUID, data: ProblemResponseCreate
     ) -> ProblemReportResult:
         problem = await self.get(problem_id)
-        keep_importance = data.is_observable and problem.category.is_importance_level_required
+        # A "no longer exists" answer carries no severity.
         report = ProblemReport(
             problem_id=problem.id,
             is_observable=data.is_observable,
-            importance_level=data.importance_level if keep_importance else None,
+            importance_level=data.importance_level if data.is_observable else None,
             description=data.description,
             latitude=data.latitude,
             longitude=data.longitude,

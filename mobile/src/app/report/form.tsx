@@ -79,10 +79,10 @@ export default function ReportFormScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { draft, update } = useReportDraft();
-  const { needsImportance, categories } = useDraftCategory();
+  const { categories } = useDraftCategory();
   const { publish, isPending, error } = usePublishDraft();
   const place = usePlaceLabel(draft.location);
-  const missing = missingField(draft, needsImportance);
+  const missing = missingField(draft);
   const scrollRef = useRef<ScrollView>(null);
 
   // Edge-to-edge Android ignores adjustResize, so the screen pads itself above the keyboard
@@ -135,31 +135,27 @@ export default function ReportFormScreen() {
           ))}
         </View>
 
-        {needsImportance && (
-          <>
-            <ThemedText type="subheading" style={styles.section}>
-              Jak poważny jest problem?
-            </ThemedText>
-            <View style={styles.stars}>
-              <Stars
-                value={draft.importance ?? 0}
-                size={40}
-                onChange={(importance) => update({ importance })}
-              />
-            </View>
-            <ThemedText type="body" bold style={styles.sevLabel}>
-              {SEVERITY_LABELS[draft.importance ?? 0]}
-            </ThemedText>
-            <View style={styles.sevScale}>
-              <ThemedText type="caption" style={styles.scaleText}>
-                1 · drobna niedogodność
-              </ThemedText>
-              <ThemedText type="caption" style={styles.scaleText}>
-                5 · całkowita blokada
-              </ThemedText>
-            </View>
-          </>
-        )}
+        <ThemedText type="subheading" style={styles.section}>
+          Jak poważny jest problem?
+        </ThemedText>
+        <View style={styles.stars}>
+          <Stars
+            value={draft.importance ?? 0}
+            size={40}
+            onChange={(importance) => update({ importance })}
+          />
+        </View>
+        <ThemedText type="body" bold style={styles.sevLabel}>
+          {SEVERITY_LABELS[draft.importance ?? 0]}
+        </ThemedText>
+        <View style={styles.sevScale}>
+          <ThemedText type="caption" style={styles.scaleText}>
+            1 · drobna niedogodność
+          </ThemedText>
+          <ThemedText type="caption" style={styles.scaleText}>
+            5 · całkowita blokada
+          </ThemedText>
+        </View>
 
         <ThemedText type="subheading" style={styles.section}>
           Lokalizacja

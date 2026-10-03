@@ -50,13 +50,13 @@ function EditRow({
 export default function ReportConfirmScreen() {
   const router = useRouter();
   const { draft } = useReportDraft();
-  const { category, proposal, needsImportance } = useDraftCategory();
+  const { category, proposal } = useDraftCategory();
   const { publish, isPending, error } = usePublishDraft();
   const place = usePlaceLabel(draft.location);
 
   const name = category?.name ?? proposal?.name ?? 'Wybierz kategorię';
   const icon = category?.icon ?? proposal?.icon ?? 'circle-alert';
-  const missing = missingField(draft, needsImportance);
+  const missing = missingField(draft);
   const edit = () => router.push('/report/form');
 
   return (
@@ -92,22 +92,20 @@ export default function ReportConfirmScreen() {
         )}
 
         <View style={styles.rows}>
-          {needsImportance && (
-            <EditRow label="Ważność" onPress={edit}>
-              {draft.importance ? (
-                <View style={styles.sevRow}>
-                  <Stars value={draft.importance} size={20} />
-                  <ThemedText type="small" themeColor="neutral800">
-                    {SEVERITY_LABELS[draft.importance]}
-                  </ThemedText>
-                </View>
-              ) : (
-                <ThemedText type="bodyLarge" bold style={{ color: Colors.accent2_700 }}>
-                  Oceń ważność
+          <EditRow label="Ważność" onPress={edit}>
+            {draft.importance ? (
+              <View style={styles.sevRow}>
+                <Stars value={draft.importance} size={20} />
+                <ThemedText type="small" themeColor="neutral800" style={styles.sevLabel}>
+                  {SEVERITY_LABELS[draft.importance]}
                 </ThemedText>
-              )}
-            </EditRow>
-          )}
+              </View>
+            ) : (
+              <ThemedText type="bodyLarge" bold style={{ color: Colors.accent2_700 }}>
+                Oceń ważność
+              </ThemedText>
+            )}
+          </EditRow>
           <EditRow label="Lokalizacja" onPress={edit}>
             <ThemedText type="bodyLarge">{place.data ?? 'Twoja lokalizacja'}</ThemedText>
             <View style={styles.auto}>
@@ -206,6 +204,7 @@ const styles = StyleSheet.create({
   },
   rowBody: { flex: 1, gap: 2 },
   sevRow: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  sevLabel: { flex: 1 },
   auto: { flexDirection: 'row', alignItems: 'center', gap: 5 },
   info: { flexDirection: 'row', gap: 6, marginTop: 14 },
   error: { color: Colors.accent2_700, marginTop: 10 },

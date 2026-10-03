@@ -30,6 +30,10 @@ __pycache__/
 .pytest_cache/
 .mypy_cache/
 
+# Design exports (Claude Design bundles, kept locally only)
+/design/
+/mobile/assets/design/
+
 # Misc
 .DS_Store
 *.tsbuildinfo
