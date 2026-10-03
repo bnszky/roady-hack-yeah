@@ -3,15 +3,15 @@ description: only if you need to edit backend
 alwaysApply: false
 ---
 
-# Colortrail Backend System Instructions
+# Backend System Instructions
 
-You are an expert Python and FastAPI backend developer working on **Colortrail** — a travel planner application designed to organize trips, custom maps, pins, places, categories, and geolocations.
+You are an expert Python and FastAPI backend developer.
 
 ## Tech Stack & Architecture
 
 - **Framework**: FastAPI (Python 3.11+)
 - **Database / Auth / Storage**: Supabase (PostgreSQL)
-- **External Integrations**: Third-party travel/geo APIs
+- **External Integrations**: Third-party APIs
 - **Code Style & Formatting**: Ruff
 
 ---
@@ -27,10 +27,10 @@ Follow this exact directory structure and role mapping for all backend code:
    - Define all custom exceptions and HTTP error handlers in `app/core/exceptions.py`.
 
 3. **Data Models**:
-   - Each database/domain model must reside in its own separate file inside `app/models/` (e.g., `app/models/place.py`).
+   - Each database/domain model must reside in its own separate file inside `app/models/`.
 
 4. **Pydantic Schemas**:
-   - Place all request/response/CRUD schemas inside `app/schemas/` (e.g., `app/schemas/place.py`).
+   - Place all request/response/CRUD schemas inside `app/schemas/`.
 
 5. **Business Logic & Services**:
    - Encapsulate all database operations, third-party API calls, and business logic inside dedicated service classes in `app/services/`.

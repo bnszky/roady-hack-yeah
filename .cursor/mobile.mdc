@@ -3,9 +3,9 @@ description: only if you need to edit mobile
 alwaysApply: false
 ---
 
-# Colortrail Mobile System Instructions
+# Mobile System Instructions
 
-You are an expert React Native (Expo) developer working on **Colortrail** — a travel planner app (trips, custom maps, pins, places, categories, geolocations).
+You are an expert React Native (Expo) developer working on the mobile app.
 
 ## Tech Stack & Architecture
 
@@ -26,10 +26,10 @@ You are an expert React Native (Expo) developer working on **Colortrail** — a 
 
 2. **API layer** (`src/api/`):
    - All HTTP goes through the shared fetch wrapper in `src/api/client.ts` (adds base URL + Supabase Bearer token).
-   - Define one module per resource (e.g. `src/api/places.ts`, `src/api/trips.ts`) exporting plain functions.
+   - Define one module per resource exporting plain functions.
 
 3. **Data fetching** (`src/hooks/`):
-   - Create a TanStack Query hook per resource (e.g. `src/hooks/use-places.ts`) exposing query/mutation hooks.
+   - Create a TanStack Query hook per resource exposing query/mutation hooks.
    - Components consume **only** these hooks — never call the API layer directly.
 
 4. **Shared code** (`src/lib/`):

@@ -1,6 +1,6 @@
-# Colortrail — Hackathon Monorepo
+# Routy — Hackathon Monorepo
 
-Monorepo aplikacji **Colortrail** (planer podróży) składające się z:
+Monorepo aplikacji **Routy** składające się z:
 
 - `mobile/` — aplikacja **Expo (React Native) + Expo Router + TanStack Query + Supabase**
 - `backend/` — API **FastAPI + SQLAlchemy (async) + Alembic + Supabase**
@@ -16,13 +16,14 @@ Monorepo aplikacji **Colortrail** (planer podróży) składające się z:
 ├── .prettierrc             # wspólna konfiguracja Prettier
 ├── .cursor/
 │   ├── backend.mdc         # zasady dla backendu
-│   └── mobile.mdc          # zasady dla mobile
+│   ├── mobile.mdc          # zasady dla mobile
+│   └── web-admin.mdc       # zasady dla panelu web
 ├── mobile/
 │   └── src/
 │       ├── app/            # ekrany (Expo Router, file-based routing)
-│       │   └── (tabs)/     # index (Home), trips, settings
-│       ├── api/            # warstwa HTTP (client.ts + places.ts + trips.ts)
-│       ├── hooks/          # hooki TanStack Query (use-places, use-trips, use-auth)
+│       │   └── (tabs)/     # index (Home), settings
+│       ├── api/            # warstwa HTTP (client.ts)
+│       ├── hooks/          # hooki TanStack Query (use-auth)
 │       ├── lib/            # supabase.ts, env.ts, query-client.ts
 │       ├── components/     # komponenty UI (ThemedText/View, Loading, ErrorState)
 │       └── constants/      # theme.ts (kolory, spacing)
@@ -33,10 +34,10 @@ Monorepo aplikacji **Colortrail** (planer podróży) składające się z:
         ├── main.py
         ├── core/           # config, exceptions, logging, security
         ├── db/             # session, base
-        ├── models/         # Place, Trip (SQLAlchemy)
+        ├── models/         # modele SQLAlchemy
         ├── schemas/        # Pydantic (request/response)
         ├── services/       # logika biznesowa
-        ├── api/v1/endpoints/  # health, places, trips
+        ├── api/v1/endpoints/  # health
         ├── api/deps.py     # get_current_user (JWT Supabase)
         └── middleware/     # RequestLoggingMiddleware
 ```
@@ -60,25 +61,6 @@ Monorepo aplikacji **Colortrail** (planer podróży) składające się z:
    - `anon public` key → `SUPABASE_ANON_KEY`
    - `service_role` key → `SUPABASE_SERVICE_ROLE_KEY` (tylko backend, **nigdy nie trafia do mobile**)
 3. **Project Settings → Database → Connection string** (Transaction pooler, port `6543`) → `DATABASE_URL`.
-4. Utwórz tabele (SQL Editor):
-
-```sql
-create table if not exists places (
-  id uuid primary key default gen_random_uuid(),
-  name text not null,
-  category text not null,
-  latitude double precision not null,
-  longitude double precision not null,
-  created_at timestamptz not null default now()
-);
-
-create table if not exists trips (
-  id uuid primary key default gen_random_uuid(),
-  name text not null,
-  description text,
-  created_at timestamptz not null default now()
-);
-```
 
 > Lokalnie możesz też użyć Supabase CLI (`supabase start`) — wtedy `DATABASE_URL=postgresql+asyncpg://postgres:postgres@localhost:54322/postgres`.
 
@@ -97,6 +79,7 @@ uv sync
 
 # migracje — WYGENERUJ (nie aplikuj!)
 uv run alembic revision --autogenerate -m "initial"
+
 # aplikacja migracji (po weryfikacji wygenerowanego pliku):
 uv run alembic upgrade head
 
@@ -114,15 +97,9 @@ uv run ruff format .
 
 ### Endpointy
 
-| Metoda | Ścieżka               | Auth                  |
-| ------ | --------------------- | --------------------- |
-| GET    | `/api/v1/health`      | ❌                    |
-| GET    | `/api/v1/places`      | ✅ `get_current_user` |
-| POST   | `/api/v1/places`      | ✅                    |
-| GET    | `/api/v1/places/{id}` | ✅                    |
-| GET    | `/api/v1/trips`       | ✅                    |
-| POST   | `/api/v1/trips`       | ✅                    |
-| GET    | `/api/v1/trips/{id}`  | ✅                    |
+| Metoda | Ścieżka          | Auth |
+| ------ | ---------------- | ---- |
+| GET    | `/api/v1/health` | ❌   |
 
 - Każdy request jest logowany przez `RequestLoggingMiddleware` (poziom ustawiany przez `LOG_LEVEL`).
 - Auth wyłącza się env-em `AUTH_REQUIRED=false` (poziom ustalimy później).
