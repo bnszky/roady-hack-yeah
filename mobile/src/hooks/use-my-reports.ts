@@ -44,3 +44,9 @@ export function useMyReports() {
     problems: details.flatMap((q) => (q.data ? [q.data] : [])),
   };
 }
+
+/** Whether this device published (or confirmed while reporting) the given problem. */
+export function useIsMyReport(problemId: string) {
+  const ids = useQuery({ queryKey: myReportsKey, queryFn: readIds });
+  return ids.data?.includes(problemId) ?? false;
+}

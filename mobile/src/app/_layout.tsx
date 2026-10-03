@@ -10,6 +10,8 @@ import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { IconContext } from 'phosphor-react-native';
 import { useEffect } from 'react';
+import { StyleSheet } from 'react-native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import { initMapbox } from '@/components/roady/map';
 import { Colors } from '@/constants/theme';
@@ -44,24 +46,30 @@ export default function RootLayout() {
   if (!ready) return null;
 
   return (
-    <ThemeProvider value={navigationTheme}>
-      <QueryClientProvider client={queryClient}>
-        <IconContext.Provider value={{ weight: 'duotone', color: Colors.text }}>
-          <ReportDraftProvider>
-            <Stack
-              screenOptions={{ headerShown: false, contentStyle: { backgroundColor: Colors.bg } }}
-            >
-              <Stack.Screen name="(tabs)" />
-              <Stack.Screen name="problem/[id]" />
-              <Stack.Screen
-                name="report"
-                options={{ presentation: 'fullScreenModal', animation: 'slide_from_bottom' }}
-              />
-            </Stack>
-            <StatusBar style="dark" />
-          </ReportDraftProvider>
-        </IconContext.Provider>
-      </QueryClientProvider>
-    </ThemeProvider>
+    <GestureHandlerRootView style={styles.root}>
+      <ThemeProvider value={navigationTheme}>
+        <QueryClientProvider client={queryClient}>
+          <IconContext.Provider value={{ weight: 'duotone', color: Colors.text }}>
+            <ReportDraftProvider>
+              <Stack
+                screenOptions={{ headerShown: false, contentStyle: { backgroundColor: Colors.bg } }}
+              >
+                <Stack.Screen name="(tabs)" />
+                <Stack.Screen name="problem/[id]" />
+                <Stack.Screen
+                  name="report"
+                  options={{ presentation: 'fullScreenModal', animation: 'slide_from_bottom' }}
+                />
+              </Stack>
+              <StatusBar style="dark" />
+            </ReportDraftProvider>
+          </IconContext.Provider>
+        </QueryClientProvider>
+      </ThemeProvider>
+    </GestureHandlerRootView>
   );
 }
+
+const styles = StyleSheet.create({
+  root: { flex: 1 },
+});

@@ -111,11 +111,9 @@ uv run alembic upgrade head
 uv run python -m scripts.seed --demo
 
 # uruchom serwer (http://localhost:8000, docs na /docs)
-# --host 0.0.0.0 jest potrzebne, żeby telefon w tej samej sieci Wi-Fi widział backend
+
 uv run uvicorn app.main:app --reload --host 0.0.0.0
 ```
-
-> Na Windowsie przy pierwszym starcie zezwól Pythonowi na ruch w sieci prywatnej (zapora), inaczej telefon nie połączy się z portem 8000.
 
 ### Lint / format (Ruff)
 

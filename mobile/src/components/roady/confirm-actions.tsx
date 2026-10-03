@@ -1,4 +1,4 @@
-import { CheckCircleIcon, CheckIcon, SparkleIcon } from 'phosphor-react-native';
+import { CheckCircleIcon, CheckIcon, SparkleIcon, UserCircleIcon } from 'phosphor-react-native';
 import { useSyncExternalStore } from 'react';
 import { StyleSheet, View } from 'react-native';
 
@@ -6,6 +6,7 @@ import { Button } from '@/components/roady/button';
 import { ThemedText } from '@/components/themed-text';
 import { Colors } from '@/constants/theme';
 import { useLocation } from '@/hooks/use-location';
+import { useIsMyReport } from '@/hooks/use-my-reports';
 import { useRespondToProblem } from '@/hooks/use-problems';
 
 type Answer = 'still' | 'resolved';
@@ -31,6 +32,7 @@ type Props = {
 /** "Nadal jest" / "Już naprawione" -> POST /problems/{id}/responses. */
 export function ConfirmActions({ problemId, variant }: Props) {
   const answer = useAnswer(problemId);
+  const isMine = useIsMyReport(problemId);
   const respond = useRespondToProblem(problemId);
   const { location, hasFix } = useLocation();
 
@@ -47,6 +49,18 @@ export function ConfirmActions({ problemId, variant }: Props) {
   };
 
   const height = variant === 'preview' ? 46 : 54;
+
+  // Confirming your own report would only inflate its count.
+  if (isMine) {
+    return (
+      <View style={[styles.own, { minHeight: height }]}>
+        <UserCircleIcon size={20} color={Colors.neutral700} />
+        <ThemedText type="small" themeColor="neutral800" style={styles.ownText}>
+          To Twoje zgłoszenie. Inni potwierdzą, czy nadal występuje.
+        </ThemedText>
+      </View>
+    );
+  }
 
   if (answer) {
     return (
@@ -110,6 +124,16 @@ export function ConfirmActions({ problemId, variant }: Props) {
 const styles = StyleSheet.create({
   row: { flexDirection: 'row', gap: 8 },
   flex: { flex: 1, borderRadius: 14 },
+  own: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderRadius: 14,
+    backgroundColor: Colors.neutral200,
+  },
+  ownText: { flex: 1 },
   thanks: {
     flexDirection: 'row',
     alignItems: 'center',

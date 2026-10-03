@@ -7,14 +7,7 @@ import {
   SparkleIcon,
 } from 'phosphor-react-native';
 import { useState } from 'react';
-import {
-  KeyboardAvoidingView,
-  Platform,
-  Pressable,
-  StyleSheet,
-  TextInput,
-  View,
-} from 'react-native';
+import { KeyboardAvoidingView, Pressable, StyleSheet, TextInput, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Button } from '@/components/roady/button';
@@ -46,7 +39,8 @@ export default function ReportTextScreen() {
   return (
     <KeyboardAvoidingView
       style={styles.screen}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      // Edge-to-edge Android ignores adjustResize, so pad on both platforms.
+      behavior="padding"
     >
       <ScreenHeader title="Napisz zgłoszenie" kind="close" onBack={() => router.back()} />
 

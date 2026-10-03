@@ -9,15 +9,19 @@ export const problemKeys = {
   detail: (id: string) => ['problems', 'detail', id] as const,
 };
 
-/** Rounds the bbox so tiny map pans reuse the cached query. */
+/**
+ * Snaps the bbox to a 0.001° grid so tiny map pans reuse the cached query. Always
+ * rounds outwards: rounding to nearest could shrink a zoomed-in bbox to nothing.
+ */
 function roundParams(params: ProblemListParams): ProblemListParams {
-  const r = (v?: number) => (v === undefined ? undefined : Math.round(v * 1000) / 1000);
+  const down = (v?: number) => (v === undefined ? undefined : Math.floor(v * 1000) / 1000);
+  const up = (v?: number) => (v === undefined ? undefined : Math.ceil(v * 1000) / 1000);
   return {
     ...params,
-    min_lat: r(params.min_lat),
-    max_lat: r(params.max_lat),
-    min_lng: r(params.min_lng),
-    max_lng: r(params.max_lng),
+    min_lat: down(params.min_lat),
+    max_lat: up(params.max_lat),
+    min_lng: down(params.min_lng),
+    max_lng: up(params.max_lng),
   };
 }
 

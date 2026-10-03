@@ -72,7 +72,14 @@ export function Button({
           {IconLeft && <IconLeft size={22} color={color} />}
           <ThemedText
             type="button"
-            style={[{ color }, variant === 'secondary' && { fontFamily: Fonts.regular }]}
+            numberOfLines={1}
+            adjustsFontSizeToFit
+            minimumFontScale={0.75}
+            style={[
+              styles.label,
+              { color },
+              variant === 'secondary' && { fontFamily: Fonts.regular },
+            ]}
           >
             {label}
           </ThemedText>
@@ -92,6 +99,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     borderRadius: Radius.lg,
   },
+  label: { flexShrink: 1 },
   outline: {
     borderWidth: 1,
     borderColor: Colors.divider,

@@ -7,7 +7,7 @@ import { Button } from '@/components/roady/button';
 import { ConfirmActions } from '@/components/roady/confirm-actions';
 import { IconButton } from '@/components/roady/icon-button';
 import { CategoryDisc } from '@/components/roady/markers';
-import { FloatingSheet } from '@/components/roady/sheet';
+import { FloatingSheet, useSheetClose } from '@/components/roady/sheet';
 import { Stars } from '@/components/roady/stars';
 import { StatusLine } from '@/components/roady/status';
 import { ThemedText } from '@/components/themed-text';
@@ -24,6 +24,21 @@ import {
   severityTier,
 } from '@/lib/format';
 
+/** Inside the sheet so the X slides the card out like a swipe does. */
+function CloseButton() {
+  const close = useSheetClose();
+  return (
+    <IconButton
+      icon={XIcon}
+      size={44}
+      color={Colors.neutral700}
+      onPress={close}
+      accessibilityLabel="Zamknij"
+      style={styles.close}
+    />
+  );
+}
+
 type Props = {
   problem: Problem;
   onClose: () => void;
@@ -38,7 +53,7 @@ export function ProblemPreview({ problem, onClose, bottom }: Props) {
   const avg = problem.importance_level_average;
 
   return (
-    <FloatingSheet style={{ bottom }}>
+    <FloatingSheet style={{ bottom }} onClose={onClose}>
       <View style={styles.head}>
         <CategoryDisc icon={problem.category.icon} tier={severityTier(sev)} />
         <View style={styles.headText}>
@@ -55,14 +70,7 @@ export function ProblemPreview({ problem, onClose, bottom }: Props) {
             </View>
           )}
         </View>
-        <IconButton
-          icon={XIcon}
-          size={44}
-          color={Colors.neutral700}
-          onPress={onClose}
-          accessibilityLabel="Zamknij"
-          style={styles.close}
-        />
+        <CloseButton />
       </View>
 
       <View style={styles.rows}>

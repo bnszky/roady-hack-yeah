@@ -9,8 +9,10 @@ import {
   type Icon,
 } from 'phosphor-react-native';
 import { Camera, MarkerView } from '@rnmapbox/maps';
+import { useRef } from 'react';
 import {
   ActivityIndicator,
+  KeyboardAvoidingView,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -57,7 +59,9 @@ function CategoryTile({
       <IconCmp size={26} color={selected ? Colors.accent800 : Colors.neutral800} />
       <ThemedText
         type="caption"
-        numberOfLines={2}
+        numberOfLines={3}
+        adjustsFontSizeToFit
+        minimumFontScale={0.8}
         style={[styles.tileText, { color: selected ? Colors.accent800 : Colors.text }]}
       >
         {name}
@@ -79,9 +83,15 @@ export default function ReportFormScreen() {
   const { publish, isPending, error } = usePublishDraft();
   const place = usePlaceLabel(draft.location);
   const missing = missingField(draft, needsImportance);
+  const scrollRef = useRef<ScrollView>(null);
+
+  // Edge-to-edge Android ignores adjustResize, so the screen pads itself above the keyboard
+  // and scrolls the description into view once the keyboard is up.
+  const revealDescription = () =>
+    setTimeout(() => scrollRef.current?.scrollToEnd({ animated: true }), 300);
 
   return (
-    <View style={styles.screen}>
+    <KeyboardAvoidingView style={styles.screen} behavior="padding">
       <ScreenHeader
         title={draft.source === 'form' ? 'Nowe zgłoszenie' : 'Popraw zgłoszenie'}
         kind={draft.source === 'form' ? 'close' : 'back'}
@@ -89,6 +99,7 @@ export default function ReportFormScreen() {
       />
 
       <ScrollView
+        ref={scrollRef}
         contentContainerStyle={styles.content}
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
@@ -204,6 +215,7 @@ export default function ReportFormScreen() {
           placeholder="Krótko: co widzisz, komu to przeszkadza?"
           placeholderTextColor={Colors.neutral600}
           textAlignVertical="top"
+          onFocus={revealDescription}
         />
         {error && (
           <ThemedText type="small" style={styles.error}>
@@ -225,7 +237,7 @@ export default function ReportFormScreen() {
           />
         )}
       </View>
-    </View>
+    </KeyboardAvoidingView>
   );
 }
 
@@ -235,8 +247,9 @@ const styles = StyleSheet.create({
   categoriesState: { marginTop: 10 },
   grid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 10 },
   tile: {
-    width: '23.5%',
-    height: 88,
+    width: '31.8%',
+    minHeight: 92,
+    paddingVertical: 10,
     borderRadius: 16,
     alignItems: 'center',
     justifyContent: 'center',
@@ -245,7 +258,7 @@ const styles = StyleSheet.create({
   },
   tileOn: { borderWidth: 2, borderColor: Colors.accent700, backgroundColor: Colors.accent100 },
   tileOff: { borderWidth: 1, borderColor: Colors.divider, backgroundColor: Colors.neutral100 },
-  tileText: { fontSize: 12, lineHeight: 14, textAlign: 'center' },
+  tileText: { fontSize: 13, lineHeight: 16, textAlign: 'center' },
   tileCheck: { position: 'absolute', top: 5, right: 5 },
   section: { marginTop: 28 },
   stars: { marginTop: 8 },

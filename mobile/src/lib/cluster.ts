@@ -47,11 +47,16 @@ export function clusterProblems(
   return { singles, clusters };
 }
 
+/** Extra area fetched around the viewport so markers near the edges don't pop in. */
+const BBOX_MARGIN = 0.25;
+
 export function regionToBbox(region: Viewport) {
+  const halfLat = (region.latitudeDelta / 2) * (1 + BBOX_MARGIN * 2);
+  const halfLng = (region.longitudeDelta / 2) * (1 + BBOX_MARGIN * 2);
   return {
-    min_lat: region.latitude - region.latitudeDelta / 2,
-    max_lat: region.latitude + region.latitudeDelta / 2,
-    min_lng: region.longitude - region.longitudeDelta / 2,
-    max_lng: region.longitude + region.longitudeDelta / 2,
+    min_lat: region.latitude - halfLat,
+    max_lat: region.latitude + halfLat,
+    min_lng: region.longitude - halfLng,
+    max_lng: region.longitude + halfLng,
   };
 }

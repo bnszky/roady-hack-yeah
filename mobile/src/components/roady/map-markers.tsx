@@ -21,7 +21,12 @@ export function ProblemMapMarker({
 }) {
   const sev = severityOf(problem);
   return (
-    <MarkerView coordinate={toPosition(problem)} anchor={{ x: 0.5, y: 0.5 }} allowOverlap>
+    <MarkerView
+      coordinate={toPosition(problem)}
+      anchor={{ x: 0.5, y: 0.5 }}
+      allowOverlap
+      allowOverlapWithPuck
+    >
       <Pressable
         onPress={onPress}
         accessibilityRole="button"
@@ -40,7 +45,12 @@ export function ProblemMapMarker({
 
 export function ClusterMapMarker({ cluster, onPress }: { cluster: Cluster; onPress: () => void }) {
   return (
-    <MarkerView coordinate={toPosition(cluster)} anchor={{ x: 0.5, y: 0.5 }} allowOverlap>
+    <MarkerView
+      coordinate={toPosition(cluster)}
+      anchor={{ x: 0.5, y: 0.5 }}
+      allowOverlap
+      allowOverlapWithPuck
+    >
       <Pressable
         onPress={onPress}
         accessibilityRole="button"

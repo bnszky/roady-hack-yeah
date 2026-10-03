@@ -19,16 +19,21 @@ export type ThemedTextProps = TextProps & {
   italic?: boolean;
 };
 
+/** Large system font sizes (common on Samsung) still scale text, but not enough to break layouts. */
+const MAX_FONT_SCALE = 1.3;
+
 export function ThemedText({
   style,
   type = 'body',
   themeColor,
   bold,
   italic,
+  maxFontSizeMultiplier = MAX_FONT_SCALE,
   ...rest
 }: ThemedTextProps) {
   return (
     <Text
+      maxFontSizeMultiplier={maxFontSizeMultiplier}
       style={[
         styles[type],
         themeColor && { color: Colors[themeColor] },

@@ -1,6 +1,6 @@
 import { useRouter } from 'expo-router';
 import { StopCircleIcon } from 'phosphor-react-native';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useEffectEvent, useRef, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import Animated, {
   Easing,
@@ -21,6 +21,9 @@ import { useAnalyzeReport } from '@/hooks/use-analyze-report';
 import { isSpeechRecognitionAvailable, useSpeechRecognition } from '@/hooks/use-speech-recognition';
 
 type Phase = 'recording' | 'stopping' | 'processing';
+
+/** Silence after the last recognised words that finishes the recording by itself. */
+const SILENCE_MS = 2000;
 
 function RecDot() {
   const opacity = useSharedValue(1);
@@ -97,6 +100,16 @@ export default function ReportVoiceScreen() {
     goTo('stopping');
     speech.stop();
   };
+
+  // Auto-finish once the user pauses: every new word restarts the countdown.
+  const hasWords = speech.transcript.trim().length >= 3;
+  const canAutoFinish = phase === 'recording' && speech.hasStarted && hasWords;
+  const autoFinish = useEffectEvent(() => finish());
+  useEffect(() => {
+    if (!canAutoFinish) return;
+    const t = setTimeout(autoFinish, SILENCE_MS);
+    return () => clearTimeout(t);
+  }, [canAutoFinish, speech.transcript]);
 
   const cancel = () => {
     speech.abort();
@@ -181,6 +194,11 @@ export default function ReportVoiceScreen() {
                 : 'Opisz, co się stało i gdzie…'}
             </ThemedText>
           )}
+          {canAutoFinish && (
+            <ThemedText type="caption" style={styles.autoHint}>
+              Zakończę automatycznie po chwili ciszy
+            </ThemedText>
+          )}
           {speech.error && (
             <ThemedText type="small" style={styles.error}>
               {speech.error}
@@ -238,6 +256,7 @@ const styles = StyleSheet.create({
   transcript: { fontFamily: Fonts.regular, fontSize: 26, lineHeight: 34, color: Colors.text },
   placeholder: { color: Colors.neutral600 },
   error: { color: Colors.accent2_700, marginTop: 10 },
+  autoHint: { marginTop: 14 },
   actions: { flexDirection: 'row', gap: 10 },
   spinner: {
     width: 64,

@@ -5,8 +5,8 @@ import {
   PlusCircleIcon,
   SlidersHorizontalIcon,
 } from 'phosphor-react-native';
-import { useEffect, useMemo, useRef, useState } from 'react';
-import { Camera, LocationPuck } from '@rnmapbox/maps';
+import { Camera, CustomLocationProvider, LocationPuck } from '@rnmapbox/maps';
+import { useEffect, useEffectEvent, useMemo, useRef, useState } from 'react';
 import { Pressable, StyleSheet, TextInput, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -92,17 +92,11 @@ export default function MapScreen() {
       animationDuration: 800,
     });
 
-  // Centre on the user once the first GPS fix arrives.
+  // Centre on the user once, when the first GPS fix arrives (later fixes only move the dot).
+  const centerOnUser = useEffectEvent(() => flyTo(location, CITY_ZOOM));
   useEffect(() => {
-    if (hasFix) {
-      cameraRef.current?.setCamera({
-        centerCoordinate: toPosition(location),
-        zoomLevel: CITY_ZOOM,
-        animationMode: 'flyTo',
-        animationDuration: 800,
-      });
-    }
-  }, [hasFix, location]);
+    if (hasFix) centerOnUser();
+  }, [hasFix]);
 
   // After publishing: select the new marker and show a toast...
   const [handled, setHandled] = useState(published);
@@ -156,7 +150,9 @@ export default function MapScreen() {
           ref={cameraRef}
           defaultSettings={{ centerCoordinate: toPosition(location), zoomLevel: CITY_ZOOM }}
         />
-        <LocationPuck puckBearingEnabled={false} />
+        {/* The dot shows our own expo-location fix, the same one used for the address and reports. */}
+        {hasFix && <CustomLocationProvider coordinate={toPosition(location)} heading={0} />}
+        {hasFix && <LocationPuck puckBearingEnabled={false} />}
         {clusters.map((c) => (
           <ClusterMapMarker key={`c-${c.id}`} cluster={c} onPress={() => zoomToCluster(c)} />
         ))}
