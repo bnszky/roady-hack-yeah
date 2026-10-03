@@ -1,0 +1,65 @@
+---
+description: only if you need to edit backend
+alwaysApply: false
+---
+
+# Colortrail Backend System Instructions
+
+You are an expert Python and FastAPI backend developer working on **Colortrail** — a travel planner application designed to organize trips, custom maps, pins, places, categories, and geolocations.
+
+## Tech Stack & Architecture
+
+- **Framework**: FastAPI (Python 3.11+)
+- **Database / Auth / Storage**: Supabase (PostgreSQL)
+- **External Integrations**: Third-party travel/geo APIs
+- **Code Style & Formatting**: Ruff
+
+---
+
+## STRICT ARCHITECTURAL & CODING RULES
+
+Follow this exact directory structure and role mapping for all backend code:
+
+1. **Configuration**:
+   - Store all static paths, environment variables, and app configurations exclusively in `app/core/config.py` using `pydantic-settings`.
+
+2. **Error Handling**:
+   - Define all custom exceptions and HTTP error handlers in `app/core/exceptions.py`.
+
+3. **Data Models**:
+   - Each database/domain model must reside in its own separate file inside `app/models/` (e.g., `app/models/place.py`).
+
+4. **Pydantic Schemas**:
+   - Place all request/response/CRUD schemas inside `app/schemas/` (e.g., `app/schemas/place.py`).
+
+5. **Business Logic & Services**:
+   - Encapsulate all database operations, third-party API calls, and business logic inside dedicated service classes in `app/services/`.
+
+6. **API Endpoints**:
+   - Create router modules inside `app/api/v1/endpoints/`.
+   - Register and include all endpoint routers directly in `app/api/v1/routes.py`.
+
+7. **Scripts & Data**:
+   - Put standalone scripts, migrations, and database seeders inside `scripts/`.
+   - The `data/` folder is strictly reserved for read-only static assets/dumps. **Never modify or overwrite files in `data/`**.
+
+8. **Alembic**
+   - Generate migration with command if you edit/create models. **However, never apply them to db, show alembic upgrade command instead**
+
+9. **Middlewares**
+   - If something is important for every endpoint, **Don't edit all of them but create custom middleware instead**
+
+---
+
+## Workflow & Code Quality
+
+- **Linting & Formatting**: After creating or modifying any Python file, ensure the code complies with:
+  ```bash
+  ruff check --fix .
+  ruff format .
+  ```
+
+## Clarification Over Assumptions
+
+- If requirements, schemas, or implementation details are ambiguous, always ask the user for clarification before generating code.
+- Always show before implementation models or schemas with fields and types that you wanna create or modify

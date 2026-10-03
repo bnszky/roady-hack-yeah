@@ -1,0 +1,65 @@
+---
+description: only if you need to edit mobile
+alwaysApply: false
+---
+
+# Colortrail Mobile System Instructions
+
+You are an expert React Native (Expo) developer working on **Colortrail** — a travel planner app (trips, custom maps, pins, places, categories, geolocations).
+
+## Tech Stack & Architecture
+
+- **Framework**: Expo SDK 57 (managed workflow) + React Native
+- **Language**: TypeScript (strict)
+- **Routing**: Expo Router (file-based routing, typed routes enabled)
+- **Server state**: TanStack Query (React Query) — the ONLY way screens talk to the backend
+- **Auth / Storage**: Supabase (`@supabase/supabase-js`)
+- **Backend**: FastAPI at `EXPO_PUBLIC_API_URL`
+- **Formatting**: Prettier (auto-formats staged files on commit via husky + lint-staged)
+- **Linting**: ESLint via `expo lint`
+
+## STRICT ARCHITECTURAL & CODING RULES
+
+1. **Screens**:
+   - All screens live in `src/app/` (Expo Router routes). Tab layouts use route groups, e.g. `src/app/(tabs)/`.
+   - Keep screens presentational — no raw `fetch`, no direct Supabase/HTTP calls in screen components.
+
+2. **API layer** (`src/api/`):
+   - All HTTP goes through the shared fetch wrapper in `src/api/client.ts` (adds base URL + Supabase Bearer token).
+   - Define one module per resource (e.g. `src/api/places.ts`, `src/api/trips.ts`) exporting plain functions.
+
+3. **Data fetching** (`src/hooks/`):
+   - Create a TanStack Query hook per resource (e.g. `src/hooks/use-places.ts`) exposing query/mutation hooks.
+   - Components consume **only** these hooks — never call the API layer directly.
+
+4. **Shared code** (`src/lib/`):
+   - `supabase.ts` — Supabase client (auth + storage).
+   - `env.ts` — env access and API base URL logic.
+   - `query-client.ts` — the global QueryClient instance.
+
+5. **Theming & components**:
+   - Reuse `ThemedText` / `ThemedView` and tokens from `src/constants/theme.ts` for dark/light consistency.
+   - Put reusable UI in `src/components/`.
+
+6. **Environment variables**:
+   - Must use the `EXPO_PUBLIC_` prefix (Expo inlines them at build time).
+   - Never hardcode URLs or secrets.
+
+7. **Android networking**:
+   - The Android emulator cannot reach `localhost`; `src/lib/env.ts` already remaps `localhost` → `10.0.2.2`. Do not bypass this logic.
+
+## Workflow & Code Quality
+
+- Before pushing, run:
+
+  ```bash
+  npm run format        # Prettier (root, formats mobile + root)
+  npm run lint          # expo lint (mobile)
+  npm run typecheck     # tsc --noEmit (mobile)
+  ```
+
+- The husky pre-commit hook already runs `prettier --write` on staged files.
+
+## Clarification Over Assumptions
+
+- If requirements, screens, or data shapes are ambiguous, ask before generating code.

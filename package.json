@@ -1,0 +1,27 @@
+{
+  "name": "colortrail",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Colortrail hackathon monorepo: mobile (Expo/React Native) + backend (FastAPI)",
+  "workspaces": [
+    "mobile"
+  ],
+  "scripts": {
+    "mobile": "npm run start --workspace mobile",
+    "mobile:android": "npm run android --workspace mobile",
+    "mobile:web": "npm run web --workspace mobile",
+    "lint": "npm run lint --workspace mobile",
+    "typecheck": "npm run typecheck --workspace mobile",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "husky": "^9.1.7",
+    "lint-staged": "^15.3.0",
+    "prettier": "^3.4.2"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx,json,md,css}": "prettier --write"
+  }
+}
