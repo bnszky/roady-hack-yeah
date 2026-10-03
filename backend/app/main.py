@@ -5,7 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.v1.routes import api_router
 from app.core.config import settings
-from app.core.exceptions import register_exception_handlers
+from app.core.exceptions import ServiceNotConfiguredError, register_exception_handlers
 from app.core.logging import configure_logging
 from app.middleware.logging import RequestLoggingMiddleware
 
@@ -56,13 +56,25 @@ async def root() -> dict:
     }
 
 
-client = AsyncOpenAI(
-    api_key=settings.groq_api_key,
-    base_url="https://api.groq.com/openai/v1"
-)
+_groq_client: AsyncOpenAI | None = None
+
+
+def get_groq_client() -> AsyncOpenAI:
+    """Created on first use, so a missing GROQ_API_KEY only disables this endpoint
+    instead of crashing the whole API at import time."""
+    global _groq_client
+    if not settings.groq_api_key:
+        raise ServiceNotConfiguredError("Voice assistant is not configured (GROQ_API_KEY)")
+    if _groq_client is None:
+        _groq_client = AsyncOpenAI(
+            api_key=settings.groq_api_key, base_url="https://api.groq.com/openai/v1"
+        )
+    return _groq_client
+
 
 @app.get("/process-command")
 async def process_command(text: str):
+    client = get_groq_client()
     system_prompt = """Jesteś głosowym asystentem nawigacyjnym dla rowerzystów i osób na wózkach inwalidzkich. Użytkownik komunikuje się z Tobą w ruchu.
     Twoje główne zadania:
     1. Przyjmowanie zgłoszeń o przeszkodach (np. dziury, wysokie krawężniki, wypadki) – potwierdzaj ich przyjęcie.

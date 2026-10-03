@@ -1,5 +1,6 @@
-import { Pressable, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
 
+import { Button } from '@/components/roady/button';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Spacing } from '@/constants/theme';
@@ -12,19 +13,11 @@ type Props = {
 export function ErrorState({ message, onRetry }: Props) {
   return (
     <ThemedView style={styles.container}>
-      <ThemedText type="subtitle" themeColor="textSecondary">
-        Something went wrong
-      </ThemedText>
-      <ThemedText type="small" themeColor="textSecondary">
+      <ThemedText type="heading">Coś poszło nie tak</ThemedText>
+      <ThemedText type="caption" style={styles.message}>
         {message}
       </ThemedText>
-      {onRetry && (
-        <Pressable onPress={onRetry} style={({ pressed }) => pressed && styles.pressed}>
-          <ThemedView type="backgroundElement" style={styles.button}>
-            <ThemedText type="linkPrimary">Try again</ThemedText>
-          </ThemedView>
-        </Pressable>
-      )}
+      {onRetry && <Button variant="secondary" label="Spróbuj ponownie" onPress={onRetry} />}
     </ThemedView>
   );
 }
@@ -37,13 +30,8 @@ const styles = StyleSheet.create({
     gap: Spacing.two,
     padding: Spacing.four,
   },
-  button: {
-    paddingHorizontal: Spacing.four,
-    paddingVertical: Spacing.two,
-    borderRadius: Spacing.five,
-    marginTop: Spacing.two,
-  },
-  pressed: {
-    opacity: 0.7,
+  message: {
+    textAlign: 'center',
+    marginBottom: Spacing.two,
   },
 });

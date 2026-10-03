@@ -1,28 +1,44 @@
-import { Platform, StyleSheet, Text, type TextProps } from 'react-native';
+import { StyleSheet, Text, type TextProps } from 'react-native';
 
-import { Fonts, ThemeColor } from '@/constants/theme';
-import { useTheme } from '@/hooks/use-theme';
+import { Colors, Fonts, type ThemeColor } from '@/constants/theme';
 
 export type ThemedTextProps = TextProps & {
-  type?: 'default' | 'title' | 'small' | 'smallBold' | 'subtitle' | 'link' | 'linkPrimary' | 'code';
+  type?:
+    | 'display'
+    | 'title'
+    | 'heading'
+    | 'subheading'
+    | 'bodyLarge'
+    | 'body'
+    | 'small'
+    | 'caption'
+    | 'kicker'
+    | 'button';
   themeColor?: ThemeColor;
+  bold?: boolean;
+  italic?: boolean;
 };
 
-export function ThemedText({ style, type = 'default', themeColor, ...rest }: ThemedTextProps) {
-  const theme = useTheme();
+/** Large system font sizes (common on Samsung) still scale text, but not enough to break layouts. */
+const MAX_FONT_SCALE = 1.3;
 
+export function ThemedText({
+  style,
+  type = 'body',
+  themeColor,
+  bold,
+  italic,
+  maxFontSizeMultiplier = MAX_FONT_SCALE,
+  ...rest
+}: ThemedTextProps) {
   return (
     <Text
+      maxFontSizeMultiplier={maxFontSizeMultiplier}
       style={[
-        { color: theme[themeColor ?? 'text'] },
-        type === 'default' && styles.default,
-        type === 'title' && styles.title,
-        type === 'small' && styles.small,
-        type === 'smallBold' && styles.smallBold,
-        type === 'subtitle' && styles.subtitle,
-        type === 'link' && styles.link,
-        type === 'linkPrimary' && styles.linkPrimary,
-        type === 'code' && styles.code,
+        styles[type],
+        themeColor && { color: Colors[themeColor] },
+        bold && { fontFamily: Fonts.semibold },
+        italic && { fontFamily: Fonts.italic },
         style,
       ]}
       {...rest}
@@ -31,43 +47,21 @@ export function ThemedText({ style, type = 'default', themeColor, ...rest }: The
 }
 
 const styles = StyleSheet.create({
-  small: {
-    fontSize: 14,
-    lineHeight: 20,
-    fontWeight: 500,
+  display: { fontFamily: Fonts.bold, fontSize: 32, lineHeight: 39, color: Colors.text },
+  title: { fontFamily: Fonts.semibold, fontSize: 26, lineHeight: 32, color: Colors.text },
+  heading: { fontFamily: Fonts.semibold, fontSize: 20, lineHeight: 26, color: Colors.text },
+  subheading: { fontFamily: Fonts.semibold, fontSize: 18, lineHeight: 24, color: Colors.text },
+  bodyLarge: { fontFamily: Fonts.regular, fontSize: 17, lineHeight: 25, color: Colors.text },
+  body: { fontFamily: Fonts.regular, fontSize: 16, lineHeight: 22, color: Colors.text },
+  small: { fontFamily: Fonts.regular, fontSize: 14, lineHeight: 20, color: Colors.text },
+  caption: { fontFamily: Fonts.regular, fontSize: 13, lineHeight: 18, color: Colors.neutral700 },
+  kicker: {
+    fontFamily: Fonts.regular,
+    fontSize: 13,
+    lineHeight: 18,
+    letterSpacing: 1,
+    textTransform: 'uppercase',
+    color: Colors.neutral700,
   },
-  smallBold: {
-    fontSize: 14,
-    lineHeight: 20,
-    fontWeight: 700,
-  },
-  default: {
-    fontSize: 16,
-    lineHeight: 24,
-    fontWeight: 500,
-  },
-  title: {
-    fontSize: 48,
-    fontWeight: 600,
-    lineHeight: 52,
-  },
-  subtitle: {
-    fontSize: 32,
-    lineHeight: 44,
-    fontWeight: 600,
-  },
-  link: {
-    lineHeight: 30,
-    fontSize: 14,
-  },
-  linkPrimary: {
-    lineHeight: 30,
-    fontSize: 14,
-    color: '#3c87f7',
-  },
-  code: {
-    fontFamily: Fonts.mono,
-    fontWeight: Platform.select({ android: 700 }) ?? 500,
-    fontSize: 12,
-  },
+  button: { fontFamily: Fonts.semibold, fontSize: 16, lineHeight: 20, color: Colors.text },
 });
