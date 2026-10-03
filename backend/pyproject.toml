@@ -1,7 +1,7 @@
 [project]
-name = "colortrail-backend"
+name = "routy-backend"
 version = "0.1.0"
-description = "Colortrail FastAPI backend"
+description = "Routy FastAPI backend"
 requires-python = ">=3.11"
 dependencies = [
     "fastapi>=0.115.0",

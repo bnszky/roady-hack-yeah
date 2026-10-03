@@ -1,0 +1,61 @@
+---
+description: Routy admin panel (web/) - React, TanStack Query and Shadcn UI guidelines
+alwaysApply: false
+---
+
+# Routy Admin Panel - Frontend Development Guidelines
+
+You are an expert Frontend Developer building the **Routy** admin panel (`web/`) with React, TypeScript, Vite, React Router, TanStack Query, Shadcn UI, Tailwind CSS and React Leaflet.
+
+Routy is a crowdsourced map of accessibility problems in the city. The admin panel lets city staff browse problems on a map, sort/filter them, update their status and manage problem categories (including approving categories proposed by users). UI copy is in **Polish**.
+
+---
+
+## 1. Project Architecture & Directory Structure
+
+- **`src/pages/`**: Full page views and route components (registered in `src/router.tsx`).
+- **`src/components/`**: Large, feature-specific composite components.
+- **`src/components/shared/`**: Reusable shared building blocks. Reference `src/components/shared/labeled-input.tsx` for component patterns combining `cn()` and Shadcn UI primitives.
+- **`src/components/ui/`**: Auto-generated Shadcn UI components. **NEVER manually edit or modify files in `components/ui/`**.
+- **`src/hooks/`**: Reusable custom React hooks.
+- **`src/context/`**: React Context providers and consumers.
+- **`src/lib/`**: Generic helper utilities, formatting functions, and common libraries.
+- **`src/types/`**: All TypeScript interfaces, types, and enums matching backend data structures and models.
+- **`src/api/`**: All backend communication logic (TanStack Query hooks, mutations, query keys, and fetch functions).
+
+---
+
+## 2. UI & Styling Rules
+
+- **Shadcn UI & Tailwind CSS**:
+  - Check [Shadcn UI Docs](https://ui.shadcn.com/docs/components) before building UI elements from scratch.
+  - Install new Shadcn primitives as needed via CLI (`npx shadcn@latest add <component>` in `web/`) rather than writing custom equivalents.
+  - Use `cn()` from `src/lib/utils` for conditional class merging.
+  - Prioritize reusing existing components from `src/components/shared/`.
+- **Maps**: use `src/components/problems-map.tsx` (React Leaflet + OpenStreetMap tiles).
+- **Category icons**: lucide icon names stored in the DB, mapped in `src/lib/category-icons.ts` (keep in sync with `SUGGESTED_ICONS` in `backend/app/services/assistant_service.py`).
+
+---
+
+## 3. Data Fetching & API Communication
+
+- **Backend-Only Communication**:
+  - Always communicate exclusively with the FastAPI backend (`VITE_API_URL`, default `http://localhost:8000/api/v1`).
+  - Structure all API endpoints, query keys, queries, and mutations inside `src/api/`.
+  - Use **TanStack Query** (`@tanstack/react-query`) for all asynchronous server-state management.
+- **Schema Synchronization**:
+  - When defining new queries, mutations, or types, always inspect `backend/app/schemas/` and `backend/app/api/v1/endpoints/` to ensure payload and response parity.
+
+---
+
+## 4. Code Quality & Workflow
+
+- **Clarification Over Assumptions**:
+  - If requirements, contracts, or UX flows are ambiguous, **always ask the user before writing or modifying code**.
+- **Linting & Formatting**:
+  - Validate all code changes before completion:
+    ```bash
+    npx prettier --check .      # from repo root
+    npm run lint                # in web/ (oxlint)
+    npm run build               # in web/ (tsc + vite)
+    ```

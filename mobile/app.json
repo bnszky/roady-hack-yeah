@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "Colortrail",
-    "slug": "colortrail",
+    "name": "Routy",
+    "slug": "routy",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "colortrail",
+    "scheme": "routy",
     "userInterfaceStyle": "automatic",
     "ios": {
       "icon": "./assets/expo.icon"
@@ -18,7 +18,7 @@
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
       "predictiveBackGestureEnabled": false,
-      "package": "com.colortrail.app"
+      "package": "com.routy.app"
     },
     "web": {
       "output": "static",

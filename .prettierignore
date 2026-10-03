@@ -5,4 +5,5 @@ web-build
 .venv
 __pycache__
 backend/.venv
+web/src/components/ui
 .git
