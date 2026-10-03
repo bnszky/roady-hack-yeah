@@ -29,6 +29,6 @@ const styles = StyleSheet.create({
   bar: {
     width: 6,
     borderRadius: 3,
-    backgroundColor: Colors.text,
+    backgroundColor: Colors.accent2_600,
   },
 });

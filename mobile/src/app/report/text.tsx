@@ -167,7 +167,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingBottom: 18,
   },
-  question: { fontSize: 30, lineHeight: 35 },
+  question: { fontSize: 30, lineHeight: 37 },
   example: {
     alignSelf: 'flex-start',
     flexDirection: 'row',

@@ -101,7 +101,6 @@ export function ProblemPreview({ problem, onClose, bottom }: Props) {
           label="Zobacz szczegóły"
           iconRight={ArrowRightIcon}
           height={52}
-          style={styles.details}
           onPress={() => router.push(`/problem/${problem.id}`)}
         />
       </View>
@@ -113,12 +112,11 @@ const styles = StyleSheet.create({
   head: { flexDirection: 'row', gap: 14, alignItems: 'flex-start' },
   headText: { flex: 1, minWidth: 0 },
   kicker: { fontSize: 12 },
-  title: { fontSize: 22, lineHeight: 25, marginTop: 2 },
+  title: { fontSize: 22, lineHeight: 28, marginTop: 2 },
   stars: { flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 6 },
   close: { marginTop: -6, marginRight: -10 },
   rows: { gap: 8, marginTop: 14 },
   row: { flexDirection: 'row', alignItems: 'center', gap: 10 },
   rowText: { fontSize: 15, flex: 1 },
   actions: { marginTop: 16, gap: 8 },
-  details: { borderRadius: 14 },
 });

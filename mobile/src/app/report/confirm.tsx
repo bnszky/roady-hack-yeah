@@ -9,8 +9,8 @@ import {
 } from 'phosphor-react-native';
 import type { ReactNode } from 'react';
 import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { ActionBar } from '@/components/roady/action-bar';
 import { Button } from '@/components/roady/button';
 import { CategoryDisc } from '@/components/roady/markers';
 import { ScreenHeader } from '@/components/roady/screen-header';
@@ -49,7 +49,6 @@ function EditRow({
 
 export default function ReportConfirmScreen() {
   const router = useRouter();
-  const insets = useSafeAreaInsets();
   const { draft } = useReportDraft();
   const { category, proposal, needsImportance } = useDraftCategory();
   const { publish, isPending, error } = usePublishDraft();
@@ -153,9 +152,9 @@ export default function ReportConfirmScreen() {
         )}
       </ScrollView>
 
-      <View style={[styles.footer, { paddingBottom: 14 + insets.bottom }]}>
+      <ActionBar>
         <Button
-          variant="secondary"
+          variant="danger"
           label="Edytuj"
           icon={PencilSimpleIcon}
           height={58}
@@ -170,7 +169,7 @@ export default function ReportConfirmScreen() {
           loading={isPending}
           onPress={missing ? edit : publish}
         />
-      </View>
+      </ActionBar>
     </View>
   );
 }
@@ -189,7 +188,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.accent100,
   },
   head: { flexDirection: 'row', alignItems: 'center', gap: 14, marginTop: 18 },
-  title: { fontSize: 28, lineHeight: 31 },
+  title: { fontSize: 28, lineHeight: 35 },
   note: { marginTop: 10 },
   rows: {
     marginTop: 22,
@@ -210,12 +209,4 @@ const styles = StyleSheet.create({
   auto: { flexDirection: 'row', alignItems: 'center', gap: 5 },
   info: { flexDirection: 'row', gap: 6, marginTop: 14 },
   error: { color: Colors.accent2_700, marginTop: 10 },
-  footer: {
-    flexDirection: 'row',
-    gap: 10,
-    paddingTop: 12,
-    paddingHorizontal: 20,
-    borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: Colors.divider,
-  },
 });

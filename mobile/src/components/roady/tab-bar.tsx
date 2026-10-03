@@ -32,7 +32,7 @@ function TabButton({
       style={styles.tab}
     >
       <View style={[styles.indicator, active && styles.indicatorActive]}>
-        <IconCmp size={23} color={active ? Colors.accent800 : Colors.neutral700} />
+        <IconCmp size={23} color={active ? Colors.neutral100 : Colors.neutral700} />
       </View>
       <ThemedText type="caption" style={styles.label}>
         {label}
@@ -83,12 +83,13 @@ const styles = StyleSheet.create({
   indicator: {
     width: 60,
     height: 32,
-    borderRadius: 16,
+    borderRadius: 50,
     alignItems: 'center',
     justifyContent: 'center',
   },
   indicatorActive: {
-    backgroundColor: Colors.accent200,
+    backgroundColor: Colors.accent,
+    borderRadius: 50,
   },
   label: {
     fontSize: 12,

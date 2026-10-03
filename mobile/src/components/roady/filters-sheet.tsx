@@ -135,5 +135,5 @@ const styles = StyleSheet.create({
   sectionLarge: { marginTop: 22, marginBottom: 10 },
   error: { marginBottom: 10 },
   chips: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
-  submit: { marginTop: 26, borderRadius: 16 },
+  submit: { marginTop: 26 },
 });

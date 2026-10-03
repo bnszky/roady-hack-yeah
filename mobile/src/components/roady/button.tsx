@@ -10,7 +10,8 @@ import {
 import { ThemedText } from '@/components/themed-text';
 import { Colors, Fonts, Radius } from '@/constants/theme';
 
-type Variant = 'primary' | 'secondary' | 'dark' | 'disabled';
+/** danger = magenta (on the dark action bars: "Już naprawione", "Edytuj"). */
+type Variant = 'primary' | 'secondary' | 'dark' | 'danger' | 'disabled';
 
 type Props = {
   label: string;
@@ -28,6 +29,7 @@ const BG: Record<Variant, { idle: string; pressed: string }> = {
   primary: { idle: Colors.accent, pressed: Colors.accent700 },
   secondary: { idle: 'transparent', pressed: Colors.neutral200 },
   dark: { idle: Colors.text, pressed: Colors.neutral800 },
+  danger: { idle: Colors.accent2_600, pressed: Colors.accent2_700 },
   disabled: { idle: Colors.neutral300, pressed: Colors.neutral300 },
 };
 
@@ -35,6 +37,7 @@ const FG: Record<Variant, string> = {
   primary: Colors.neutral100,
   secondary: Colors.text,
   dark: Colors.neutral100,
+  danger: Colors.neutral100,
   disabled: Colors.neutral800,
 };
 
@@ -62,6 +65,7 @@ export function Button({
         styles.base,
         { height, backgroundColor: pressed ? BG[variant].pressed : BG[variant].idle },
         variant === 'secondary' && styles.outline,
+        variant === 'disabled' && styles.disabled,
         style,
       ]}
     >
@@ -97,8 +101,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     gap: 8,
     paddingHorizontal: 16,
-    borderRadius: Radius.lg,
+    borderRadius: Radius.pill,
   },
+  disabled: { borderRadius: Radius.lg },
   label: { flexShrink: 1 },
   outline: {
     borderWidth: 1,

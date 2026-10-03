@@ -184,7 +184,7 @@ export default function ActivityScreen() {
           <SettingRow
             icon={SignOutIcon}
             label="Wyloguj się"
-            color={Colors.accent2_700}
+            color={Colors.neutral700}
             onPress={signOut}
           />
         )}
@@ -202,12 +202,12 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     borderRadius: 30,
-    backgroundColor: Colors.accent200,
+    backgroundColor: Colors.accent,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  avatarText: { fontSize: 22, color: Colors.accent800 },
-  name: { fontSize: 24, lineHeight: 27 },
+  avatarText: { fontSize: 22, color: Colors.neutral100 },
+  name: { fontSize: 24, lineHeight: 30 },
   section: { marginTop: 32 },
   list: { marginTop: 8 },
   reportRow: {

@@ -229,7 +229,7 @@ export default function ReportVoiceScreen() {
           <Button label="Nagraj ponownie" height={58} style={{ flex: 1.6 }} onPress={restart} />
         ) : (
           <Button
-            variant="dark"
+            variant="primary"
             label="Zakończ"
             icon={StopCircleIcon}
             height={58}
@@ -253,7 +253,7 @@ const styles = StyleSheet.create({
   elapsed: { marginLeft: 'auto', fontSize: 17, fontVariant: ['tabular-nums'] },
   body: { flex: 1, justifyContent: 'center', gap: 30 },
   hearing: { marginBottom: 12 },
-  transcript: { fontFamily: Fonts.regular, fontSize: 26, lineHeight: 34, color: Colors.text },
+  transcript: { fontFamily: Fonts.regular, fontSize: 26, lineHeight: 35, color: Colors.text },
   placeholder: { color: Colors.neutral600 },
   error: { color: Colors.accent2_700, marginTop: 10 },
   autoHint: { marginTop: 14 },

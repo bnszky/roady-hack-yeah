@@ -49,11 +49,13 @@ export function ConfirmActions({ problemId, variant }: Props) {
   };
 
   const height = variant === 'preview' ? 46 : 54;
+  // In the details screen these sit in the row-based ActionBar and must fill it.
+  const fill = variant === 'details' && styles.fill;
 
   // Confirming your own report would only inflate its count.
   if (isMine) {
     return (
-      <View style={[styles.own, { minHeight: height }]}>
+      <View style={[styles.own, { minHeight: height }, fill]}>
         <UserCircleIcon size={20} color={Colors.neutral700} />
         <ThemedText type="small" themeColor="neutral800" style={styles.ownText}>
           To Twoje zgłoszenie. Inni potwierdzą, czy nadal występuje.
@@ -64,7 +66,7 @@ export function ConfirmActions({ problemId, variant }: Props) {
 
   if (answer) {
     return (
-      <View style={[styles.thanks, { height }]}>
+      <View style={[styles.thanks, { height }, fill]}>
         <CheckCircleIcon size={20} color={Colors.accent800} />
         <ThemedText type="body" style={styles.thanksText}>
           {answer === 'still' ? 'Dzięki, potwierdzenie dodane' : 'Dzięki, sprawdzimy to z innymi'}
@@ -99,9 +101,9 @@ export function ConfirmActions({ problemId, variant }: Props) {
   }
 
   return (
-    <View style={styles.row}>
+    <View style={[styles.row, fill]}>
       <Button
-        variant="secondary"
+        variant="danger"
         label="Już naprawione"
         icon={SparkleIcon}
         height={height}
@@ -123,7 +125,8 @@ export function ConfirmActions({ problemId, variant }: Props) {
 
 const styles = StyleSheet.create({
   row: { flexDirection: 'row', gap: 8 },
-  flex: { flex: 1, borderRadius: 14 },
+  fill: { flex: 1 },
+  flex: { flex: 1 },
   own: {
     flexDirection: 'row',
     alignItems: 'center',

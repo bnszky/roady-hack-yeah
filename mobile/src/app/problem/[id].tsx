@@ -13,6 +13,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import type { ProblemReport } from '@/api/types';
 import { ErrorState } from '@/components/error-state';
 import { Loading } from '@/components/loading';
+import { ActionBar } from '@/components/roady/action-bar';
 import { ConfirmActions } from '@/components/roady/confirm-actions';
 import { IconButton } from '@/components/roady/icon-button';
 import { RoadyMap, toPosition } from '@/components/roady/map';
@@ -190,9 +191,9 @@ export default function ProblemDetailsScreen() {
         </View>
       </ScrollView>
 
-      <View style={[styles.footer, { paddingBottom: 14 + insets.bottom }]}>
+      <ActionBar>
         <ConfirmActions problemId={problem.id} variant="details" />
-      </View>
+      </ActionBar>
     </View>
   );
 }
@@ -239,11 +240,4 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   activityText: { flex: 1, minWidth: 0 },
-  footer: {
-    paddingTop: 14,
-    paddingHorizontal: 20,
-    backgroundColor: Colors.bg,
-    borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: Colors.divider,
-  },
 });

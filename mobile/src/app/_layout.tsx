@@ -1,9 +1,11 @@
 import {
-  SourceSerif4_400Regular,
-  SourceSerif4_400Regular_Italic,
-  SourceSerif4_600SemiBold,
+  Montserrat_400Regular,
+  Montserrat_400Regular_Italic,
+  Montserrat_500Medium,
+  Montserrat_600SemiBold,
+  Montserrat_700Bold,
   useFonts,
-} from '@expo-google-fonts/source-serif-4';
+} from '@expo-google-fonts/montserrat';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { DefaultTheme, Stack, ThemeProvider } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
@@ -33,9 +35,11 @@ const navigationTheme = {
 
 export default function RootLayout() {
   const [fontsLoaded, fontError] = useFonts({
-    SourceSerif4_400Regular,
-    SourceSerif4_400Regular_Italic,
-    SourceSerif4_600SemiBold,
+    Montserrat_400Regular,
+    Montserrat_400Regular_Italic,
+    Montserrat_500Medium,
+    Montserrat_600SemiBold,
+    Montserrat_700Bold,
   });
   const ready = fontsLoaded || !!fontError;
 

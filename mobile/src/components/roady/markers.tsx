@@ -129,7 +129,7 @@ const styles = StyleSheet.create({
     borderRadius: 26,
     borderWidth: 2.5,
     borderColor: Colors.text,
-    backgroundColor: 'rgba(32, 30, 29, 0.1)',
+    backgroundColor: 'rgba(14, 21, 20, 0.1)',
   },
   disc: {
     alignItems: 'center',
@@ -159,7 +159,7 @@ const styles = StyleSheet.create({
     width: 58,
     height: 58,
     borderRadius: 29,
-    backgroundColor: 'rgba(32, 30, 29, 0.14)',
+    backgroundColor: 'rgba(14, 21, 20, 0.14)',
     alignItems: 'center',
     justifyContent: 'center',
   },

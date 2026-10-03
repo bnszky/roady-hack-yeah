@@ -1,48 +1,52 @@
 /**
- * Roady design tokens, adapted from the "Broadsheet" design system (see
- * assets/design/design.html): paper ground, Source Serif 4 as the only typeface,
- * cyan as the interactive color and magenta as the severity spot.
+ * Roady design tokens, from design v2 (see design/design v2.html): Montserrat,
+ * white-grey ground, turquoise as the interactive color, near-black (#0E1514)
+ * for clusters and bottom action bars, magenta as the severity spot.
  */
 
 export const Colors = {
-  bg: '#f3f2f2',
-  surface: '#eae9e9',
-  text: '#201e1d',
-  divider: 'rgba(32, 30, 29, 0.16)',
-  scrim: 'rgba(45, 43, 43, 0.35)',
+  bg: '#F8F8F8',
+  surface: '#F5F5F5',
+  text: '#0E1514',
+  divider: 'rgba(14, 21, 20, 0.12)',
+  scrim: 'rgba(14, 21, 20, 0.35)',
 
-  neutral100: '#f8f4f4',
-  neutral200: '#eae7e7',
-  neutral300: '#d7d3d3',
-  neutral400: '#bab6b6',
-  neutral500: '#9b9797',
-  neutral600: '#7d7979',
-  neutral700: '#605d5d',
-  neutral800: '#444141',
-  neutral900: '#2d2b2b',
+  neutral100: '#FFFFFF',
+  neutral200: '#F5F5F5',
+  neutral300: '#DEDEDE',
+  neutral400: '#C4C4C4',
+  neutral500: '#AAAAAA',
+  neutral600: '#8A8A8A',
+  neutral700: '#5F5F5F',
+  neutral800: '#454545',
+  neutral900: '#0E1514',
 
-  // The app darkens the system's cyan for contrast on touch targets.
-  accent: '#006080',
-  accent100: '#e9f8ff',
-  accent200: '#cbeeff',
-  accent300: '#99e0ff',
-  accent600: '#005572',
-  accent700: '#004a63',
-  accent800: '#004961',
+  accent: '#0DB295',
+  accent100: '#E7F8F4',
+  accent200: '#C5EFE5',
+  accent300: '#93E2D0',
+  accent600: '#0A9E85',
+  accent700: '#087F6B',
+  accent800: '#06604F',
 
   accent2_100: '#fff1f4',
-  accent2_600: '#d82071',
+  accent2_600: '#D82071',
   accent2_700: '#aa0b56',
   accent2_800: '#790e3d',
+
+  /** Bottom action bars (details, confirmation). */
+  actionBar: '#0E1514',
 } as const;
 
 export type ThemeColor = keyof typeof Colors;
 
 /** Font family per weight: custom fonts on Android need one family per face. */
 export const Fonts = {
-  regular: 'SourceSerif4_400Regular',
-  italic: 'SourceSerif4_400Regular_Italic',
-  semibold: 'SourceSerif4_600SemiBold',
+  regular: 'Montserrat_400Regular',
+  italic: 'Montserrat_400Regular_Italic',
+  medium: 'Montserrat_500Medium',
+  semibold: 'Montserrat_600SemiBold',
+  bold: 'Montserrat_700Bold',
 } as const;
 
 export const Spacing = {
@@ -55,7 +59,7 @@ export const Spacing = {
   six: 64,
 } as const;
 
-/** Touch app radii: larger than the system's 2px (sheets 24-28, controls 14-18). */
+/** Touch app radii: buttons are pills, sheets 24-28, controls 14-18. */
 export const Radius = {
   pill: 999,
   sm: 10,
@@ -68,22 +72,22 @@ export const Shadows = {
   sm: {
     shadowColor: Colors.neutral900,
     shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.14,
-    shadowRadius: 2,
+    shadowOpacity: 0.08,
+    shadowRadius: 3,
     elevation: 2,
   },
   md: {
     shadowColor: Colors.neutral900,
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.16,
-    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.1,
+    shadowRadius: 18,
     elevation: 5,
   },
   lg: {
     shadowColor: Colors.neutral900,
-    shadowOffset: { width: 0, height: 12 },
-    shadowOpacity: 0.22,
-    shadowRadius: 32,
+    shadowOffset: { width: 0, height: 16 },
+    shadowOpacity: 0.16,
+    shadowRadius: 40,
     elevation: 12,
   },
 } as const;

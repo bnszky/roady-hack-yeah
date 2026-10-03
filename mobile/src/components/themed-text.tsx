@@ -47,10 +47,10 @@ export function ThemedText({
 }
 
 const styles = StyleSheet.create({
-  display: { fontFamily: Fonts.semibold, fontSize: 32, lineHeight: 35, color: Colors.text },
-  title: { fontFamily: Fonts.semibold, fontSize: 26, lineHeight: 30, color: Colors.text },
-  heading: { fontFamily: Fonts.semibold, fontSize: 20, lineHeight: 25, color: Colors.text },
-  subheading: { fontFamily: Fonts.semibold, fontSize: 18, lineHeight: 23, color: Colors.text },
+  display: { fontFamily: Fonts.bold, fontSize: 32, lineHeight: 39, color: Colors.text },
+  title: { fontFamily: Fonts.semibold, fontSize: 26, lineHeight: 32, color: Colors.text },
+  heading: { fontFamily: Fonts.semibold, fontSize: 20, lineHeight: 26, color: Colors.text },
+  subheading: { fontFamily: Fonts.semibold, fontSize: 18, lineHeight: 24, color: Colors.text },
   bodyLarge: { fontFamily: Fonts.regular, fontSize: 17, lineHeight: 25, color: Colors.text },
   body: { fontFamily: Fonts.regular, fontSize: 16, lineHeight: 22, color: Colors.text },
   small: { fontFamily: Fonts.regular, fontSize: 14, lineHeight: 20, color: Colors.text },
