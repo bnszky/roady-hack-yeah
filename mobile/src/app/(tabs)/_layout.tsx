@@ -23,6 +23,15 @@ export default function TabsLayout() {
         }}
       />
       <Tabs.Screen
+        name="voice"
+        options={{
+          title: 'Voice',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="mic-outline" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
         name="settings"
         options={{
           title: 'Settings',

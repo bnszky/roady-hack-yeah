@@ -33,7 +33,16 @@
           "image": "./assets/images/splash-icon.png",
           "imageWidth": 76
         }
-      ]
+      ],
+      [
+        "expo-speech-recognition",
+        {
+          "microphonePermission": "Colortrail uses the microphone to report obstacles by voice.",
+          "speechRecognitionPermission": "Colortrail uses speech recognition to understand voice reports.",
+          "androidSpeechServicePackages": ["com.google.android.googlequicksearchbox"]
+        }
+      ],
+      "expo-audio"
     ],
     "experiments": {
       "typedRoutes": true,

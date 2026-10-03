@@ -25,6 +25,9 @@ class Settings(BaseSettings):
     supabase_anon_key: str = ""
     supabase_service_role_key: str = ""
 
+    # Groq (LLM for the voice assistant)
+    groq_api_key: str = ""
+
     # Database (direct Postgres connection)
     database_url: str = "postgresql+asyncpg://postgres:postgres@localhost:54322/postgres"
 
