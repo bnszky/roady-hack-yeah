@@ -51,7 +51,19 @@ category (short Polish name, Polish description, icon from the allowed list, and
 asking about severity 1-5 makes sense - e.g. a broken elevator is just broken: false; an \
 uneven surface can be mild or severe: true).
 
-Extract severity 1-5 only if the user expressed it (explicitly or clearly implied), else null.
+ALWAYS estimate severity (importance_level) 1-5 from the context - how much the problem \
+hinders a person in a wheelchair, a blind or an elderly pedestrian:
+1 - minor inconvenience (small crack, slightly uneven, easy to pass)
+2 - bothersome (passable, but you have to be careful)
+3 - clear obstruction (slows you down, needs a detour)
+4 - serious obstruction (dangerous, very hard to pass in a wheelchair or for a blind person)
+5 - complete blockage or hazard (impassable, the only route is blocked, accident, someone \
+got hurt, a huge deep hole)
+Intensifiers raise the score ("wielka", "ogromna", "głęboka", "niebezpieczna", "nie da się \
+przejść/przejechać", "ktoś się przewrócił", "wózek utknął"); softeners lower it ("mała", \
+"drobna", "trochę", "lekko"). Without such cues use the typical severity for the problem: \
+"jest dziura w drodze" -> 2, "ogromna głęboka dziura, wózek nie przejedzie" -> 5, \
+"winda nie działa" -> 4 (wheelchair users cannot get through).
 Write a short, clean description in the user's language.
 
 Respond ONLY with JSON:
@@ -59,7 +71,7 @@ Respond ONLY with JSON:
  "new_category": null | {"name": str, "description": str, "icon": str,
                          "is_importance_level_required": bool},
  "description": str,
- "importance_level": null | 1-5,
+ "importance_level": 1-5,
  "confidence": 0.0-1.0}
 """
 
@@ -135,7 +147,6 @@ class AssistantService:
                 "id": str(c.id),
                 "name": c.name,
                 "description": c.description,
-                "asks_severity": c.is_importance_level_required,
             }
             for c in categories
         ]
@@ -165,9 +176,8 @@ class AssistantService:
                     category = await self.categories.get_read(existing.id)
                     proposal = None
 
-        chosen = category or proposal
-        asks_severity = chosen.is_importance_level_required if chosen else False
-        importance = _clamp_level(result.get("importance_level")) if asks_severity else None
+        # Severity is estimated from context for every report (it sizes the map marker).
+        importance = _clamp_level(result.get("importance_level"))
 
         existing_problem = None
         if category is not None:
@@ -180,7 +190,7 @@ class AssistantService:
         missing: list[str] = []
         if category is None and proposal is None:
             missing.append("category")
-        if asks_severity and importance is None:
+        if importance is None:
             missing.append("importance_level")
 
         return ReportDraft(

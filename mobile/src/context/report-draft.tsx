@@ -84,19 +84,20 @@ export function useReportDraft() {
 }
 
 /** What still blocks publishing, as a button label; null when the draft is complete. */
-export function missingField(draft: Draft, needsImportance: boolean): string | null {
+export function missingField(draft: Draft): string | null {
   if (!draft.categoryId && !draft.proposedCategory) return 'Wybierz kategorię';
-  if (needsImportance && !draft.importance) return 'Oceń ważność problemu';
+  // Every report carries a 1-5 severity: it sizes the marker on the map.
+  if (!draft.importance) return 'Oceń ważność problemu';
   return null;
 }
 
-export function toProblemCreate(draft: Draft, needsImportance: boolean): ProblemCreate {
+export function toProblemCreate(draft: Draft): ProblemCreate {
   return {
     ...(draft.categoryId
       ? { category_id: draft.categoryId }
       : { new_category: draft.proposedCategory! }),
     description: draft.description.trim() || null,
-    importance_level: needsImportance ? draft.importance : null,
+    importance_level: draft.importance,
     latitude: draft.location.latitude,
     longitude: draft.location.longitude,
     // The backend has no "text" source: a typed report is a form submission.
