@@ -26,7 +26,8 @@ function roundParams(params: ProblemListParams): ProblemListParams {
 }
 
 export function useProblems(params: ProblemListParams, enabled = true) {
-  const rounded = roundParams({ is_observable: true, limit: 300, ...params });
+  // A whole neighbourhood per query (see lib/cluster.ts), so use the backend maximum.
+  const rounded = roundParams({ is_observable: true, limit: 1000, ...params });
   return useQuery({
     queryKey: problemKeys.list(rounded),
     queryFn: () => problemsApi.list(rounded),

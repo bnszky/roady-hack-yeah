@@ -1,62 +1,51 @@
-import type { Problem } from '@/api/types';
 import type { Viewport } from '@/components/roady/map';
+import type { LatLng } from '@/lib/format';
 
-export type Cluster = {
-  id: string;
-  latitude: number;
-  longitude: number;
-  members: Problem[];
+// Clustering itself is done natively by Mapbox (see components/roady/problem-layer.tsx);
+// these helpers decide which area of problems to fetch and what is on screen.
+
+export type Bounds = {
+  min_lat: number;
+  max_lat: number;
+  min_lng: number;
+  max_lng: number;
 };
 
-/** Grid cells across the visible width; problems sharing a cell collapse into a cluster. */
-const CELLS_ACROSS = 7;
+/** Half-size of the fetched neighbourhood (~15 km) and the grid it snaps to. */
+const AREA_HALF_DEG = 0.15;
+const AREA_GRID_DEG = 0.1;
 
 /**
- * Cheap client-side grid clustering: good enough for the few hundred problems a
- * bbox query returns. Returns single problems and clusters (2+ members) separately.
+ * The neighbourhood fetched around a point, snapped to a 0.1° grid so small moves
+ * (or the first GPS fix near the fallback position) keep the same query.
  */
-export function clusterProblems(
-  problems: Problem[],
-  region: Viewport,
-): { singles: Problem[]; clusters: Cluster[] } {
-  const cellLng = region.longitudeDelta / CELLS_ACROSS;
-  const cellLat = cellLng; // roughly square cells, good enough at city scale
-  const cells = new Map<string, Problem[]>();
-
-  for (const p of problems) {
-    const key = `${Math.floor(p.longitude / cellLng)}:${Math.floor(p.latitude / cellLat)}`;
-    const cell = cells.get(key);
-    if (cell) cell.push(p);
-    else cells.set(key, [p]);
-  }
-
-  const singles: Problem[] = [];
-  const clusters: Cluster[] = [];
-  for (const [key, members] of cells) {
-    if (members.length === 1) {
-      singles.push(members[0]);
-      continue;
-    }
-    clusters.push({
-      id: key,
-      latitude: members.reduce((s, m) => s + m.latitude, 0) / members.length,
-      longitude: members.reduce((s, m) => s + m.longitude, 0) / members.length,
-      members,
-    });
-  }
-  return { singles, clusters };
+export function areaAround(p: LatLng): Bounds {
+  const lat = Math.round(p.latitude / AREA_GRID_DEG) * AREA_GRID_DEG;
+  const lng = Math.round(p.longitude / AREA_GRID_DEG) * AREA_GRID_DEG;
+  return {
+    min_lat: lat - AREA_HALF_DEG,
+    max_lat: lat + AREA_HALF_DEG,
+    min_lng: lng - AREA_HALF_DEG,
+    max_lng: lng + AREA_HALF_DEG,
+  };
 }
 
-/** Extra area fetched around the viewport so markers near the edges don't pop in. */
-const BBOX_MARGIN = 0.25;
+/** Whether a point lies inside the bounds, optionally shrunk by `inset` degrees. */
+export function isInside(b: Bounds, p: LatLng, inset = 0): boolean {
+  return (
+    p.latitude >= b.min_lat + inset &&
+    p.latitude <= b.max_lat - inset &&
+    p.longitude >= b.min_lng + inset &&
+    p.longitude <= b.max_lng - inset
+  );
+}
 
-export function regionToBbox(region: Viewport) {
-  const halfLat = (region.latitudeDelta / 2) * (1 + BBOX_MARGIN * 2);
-  const halfLng = (region.longitudeDelta / 2) * (1 + BBOX_MARGIN * 2);
+/** Exact bounds of the visible map. */
+export function viewportBounds(v: Viewport): Bounds {
   return {
-    min_lat: region.latitude - halfLat,
-    max_lat: region.latitude + halfLat,
-    min_lng: region.longitude - halfLng,
-    max_lng: region.longitude + halfLng,
+    min_lat: v.latitude - v.latitudeDelta / 2,
+    max_lat: v.latitude + v.latitudeDelta / 2,
+    min_lng: v.longitude - v.longitudeDelta / 2,
+    max_lng: v.longitude + v.longitudeDelta / 2,
   };
 }

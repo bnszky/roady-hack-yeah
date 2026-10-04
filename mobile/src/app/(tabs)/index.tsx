@@ -5,7 +5,7 @@ import {
   PlusCircleIcon,
   SlidersHorizontalIcon,
 } from 'phosphor-react-native';
-import { Camera, CustomLocationProvider, LocationPuck } from '@rnmapbox/maps';
+import { Camera, CircleLayer, ShapeSource } from '@rnmapbox/maps';
 import { useEffect, useEffectEvent, useMemo, useRef, useState } from 'react';
 import { Pressable, StyleSheet, TextInput, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -20,7 +20,7 @@ import {
 import { IconButton } from '@/components/roady/icon-button';
 import { InlineError } from '@/components/roady/inline-error';
 import { RoadyMap, toPosition, viewportFromState, type Viewport } from '@/components/roady/map';
-import { ClusterMapMarker, ProblemMapMarker } from '@/components/roady/map-markers';
+import { ProblemLayer } from '@/components/roady/problem-layer';
 import { ProblemPreview } from '@/components/roady/problem-preview';
 import { Toast } from '@/components/roady/toast';
 import { ThemedText } from '@/components/themed-text';
@@ -29,10 +29,10 @@ import { useReportDraft } from '@/context/report-draft';
 import { useOpenReportSheet } from '@/context/report-sheet';
 import { useLocation } from '@/hooks/use-location';
 import { useProblems } from '@/hooks/use-problems';
-import { clusterProblems, regionToBbox, type Cluster } from '@/lib/cluster';
+import { areaAround, isInside, viewportBounds } from '@/lib/cluster';
 import { countLabel } from '@/lib/format';
 
-/** Roughly a district: what the first bbox query covers before the map reports its bounds. */
+/** Roughly a district: the initial viewport before the map reports its bounds. */
 const CITY_DELTA = 0.03;
 const CITY_ZOOM = 13.5;
 const STREET_ZOOM = 15.5;
@@ -55,9 +55,14 @@ export default function MapScreen() {
   const [search, setSearch] = useState('');
   const [query, setQuery] = useState('');
   const [toast, setToast] = useState<string | null>(null);
+  // Problems are fetched once for the whole neighbourhood (~15 km); zooming and panning
+  // inside it never hit the network. A new area is fetched only when the view leaves it.
+  const [area, setArea] = useState(() => areaAround(location));
+  // A tap on a marker also reaches the map; this lets the map ignore that same tap.
+  const featurePressAt = useRef(0);
 
   const problems = useProblems({
-    ...regionToBbox(region),
+    ...area,
     category_ids: filters.categoryIds.length ? filters.categoryIds : undefined,
     min_importance: filters.minSeverity > 1 ? filters.minSeverity : undefined,
     q: query || undefined,
@@ -70,18 +75,11 @@ export default function MapScreen() {
       ),
     [problems.data, filters.recency],
   );
-  const { singles, clusters } = useMemo(() => {
-    const grouped = clusterProblems(visible, region);
-    // Never fold the selected problem into a cluster.
-    const sel = visible.find((p) => p.id === selectedId);
-    if (!sel || grouped.singles.includes(sel)) return grouped;
-    return {
-      singles: [...grouped.singles, sel],
-      clusters: grouped.clusters
-        .map((c) => ({ ...c, members: c.members.filter((m) => m.id !== sel.id) }))
-        .filter((c) => c.members.length > 1),
-    };
-  }, [visible, region, selectedId]);
+  // Count for the area label: only what is on screen right now.
+  const onScreen = useMemo(() => {
+    const b = viewportBounds(region);
+    return visible.filter((p) => isInside(b, p)).length;
+  }, [visible, region]);
   const selected = visible.find((p) => p.id === selectedId) ?? null;
 
   const flyTo = (point: { latitude: number; longitude: number }, zoomLevel: number) =>
@@ -123,16 +121,9 @@ export default function MapScreen() {
     return () => clearTimeout(t);
   }, [handled, setPublished]);
 
-  const zoomToCluster = (cluster: Cluster) => {
-    setSelectedId(null);
-    const lats = cluster.members.map((m) => m.latitude);
-    const lngs = cluster.members.map((m) => m.longitude);
-    cameraRef.current?.fitBounds(
-      [Math.max(...lngs), Math.max(...lats)],
-      [Math.min(...lngs), Math.min(...lats)],
-      [insets.top + 160, 80, 220, 80],
-      600,
-    );
+  const onMapIdle = (viewport: Viewport) => {
+    setRegion(viewport);
+    if (!isInside(area, viewport, 0.05)) setArea(areaAround(viewport));
   };
 
   const recenter = () => flyTo(location, STREET_ZOOM);
@@ -141,8 +132,10 @@ export default function MapScreen() {
     <View style={styles.container}>
       <RoadyMap
         style={StyleSheet.absoluteFill}
-        onMapIdle={(state) => setRegion(viewportFromState(state))}
-        onPress={() => setSelectedId(null)}
+        onMapIdle={(state) => onMapIdle(viewportFromState(state))}
+        onPress={() => {
+          if (Date.now() - featurePressAt.current > 300) setSelectedId(null);
+        }}
         logoPosition={{ bottom: 8, left: 8 }}
         attributionPosition={{ bottom: 8, left: 96 }}
       >
@@ -150,20 +143,39 @@ export default function MapScreen() {
           ref={cameraRef}
           defaultSettings={{ centerCoordinate: toPosition(location), zoomLevel: CITY_ZOOM }}
         />
-        {/* The dot shows our own expo-location fix, the same one used for the address and reports. */}
-        {hasFix && <CustomLocationProvider coordinate={toPosition(location)} heading={0} />}
-        {hasFix && <LocationPuck puckBearingEnabled={false} />}
-        {clusters.map((c) => (
-          <ClusterMapMarker key={`c-${c.id}`} cluster={c} onPress={() => zoomToCluster(c)} />
-        ))}
-        {singles.map((p) => (
-          <ProblemMapMarker
-            key={p.id}
-            problem={p}
-            selected={p.id === selectedId}
-            onPress={() => setSelectedId(p.id)}
-          />
-        ))}
+        <ProblemLayer
+          problems={visible}
+          selectedId={selectedId}
+          cameraRef={cameraRef}
+          onFeaturePress={() => {
+            featurePressAt.current = Date.now();
+          }}
+          onSelect={setSelectedId}
+        />
+        {/* Our own dot (design: accent dot + halo) from the expo-location fix used for the
+            address and reports. Unlike Mapbox's puck it can sit below the problem markers. */}
+        {hasFix && (
+          <ShapeSource
+            id="user-location"
+            shape={{ type: 'Point', coordinates: toPosition(location) }}
+          >
+            <CircleLayer
+              id="user-location-halo"
+              belowLayerID="problem-selection"
+              style={{ circleRadius: 23, circleColor: Colors.accent, circleOpacity: 0.18 }}
+            />
+            <CircleLayer
+              id="user-location-dot"
+              belowLayerID="problem-selection"
+              style={{
+                circleRadius: 8,
+                circleColor: Colors.accent,
+                circleStrokeWidth: 3,
+                circleStrokeColor: Colors.neutral100,
+              }}
+            />
+          </ShapeSource>
+        )}
       </RoadyMap>
 
       <View style={[styles.search, { top: insets.top + 10 }]}>
@@ -198,7 +210,7 @@ export default function MapScreen() {
         <MapPinIcon size={15} color={Colors.accent700} />
         <ThemedText type="caption" themeColor="neutral800">
           {label ?? 'Twoja okolica'} ·{' '}
-          {countLabel(visible.length, 'zgłoszenie', 'zgłoszenia', 'zgłoszeń')}
+          {countLabel(onScreen, 'zgłoszenie', 'zgłoszenia', 'zgłoszeń')}
         </ThemedText>
       </View>
 
